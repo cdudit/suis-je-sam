@@ -74,6 +74,7 @@ class _InformationsState extends State<Informations> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Card(
+                shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
                   padding: cardPadding(),
@@ -97,6 +98,7 @@ class _InformationsState extends State<Informations> {
                 ),
               ),
               Card(
+                shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
                   padding: cardPadding(),
@@ -119,8 +121,8 @@ class _InformationsState extends State<Informations> {
                                 setState(() => userWeight = d.round());
                               })),
                           infosResult((userWeight != null)
-                              ? userWeight.toString()
-                              : '0')
+                              ? (userWeight.toString() + ' kg')
+                              : '0 kg')
                         ],
                       ),
                     ],
@@ -128,6 +130,7 @@ class _InformationsState extends State<Informations> {
                 ),
               ),
               Card(
+                shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
                   padding: cardPadding(),
@@ -150,8 +153,8 @@ class _InformationsState extends State<Informations> {
                                 setState(() => userHeight = d.round());
                               })),
                           infosResult((userHeight != null)
-                              ? userHeight.toString()
-                              : '140'),
+                              ? (userHeight.toString() + ' cm')
+                              : '140 cm'),
                         ],
                       ),
                     ],
@@ -163,6 +166,11 @@ class _InformationsState extends State<Informations> {
         ),
       ),
     );
+  }
+
+  /// Renvoie une carte arrondie
+  RoundedRectangleBorder cardRadius() {
+    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0));
   }
 
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
