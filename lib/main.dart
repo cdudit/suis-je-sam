@@ -30,6 +30,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double cardElevation = 10.0;
+  double userWeight = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,34 @@ class _MyHomePageState extends State<MyHomePage> {
               Card(
                 elevation: cardElevation,
                 child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("Poids", style: TextStyle(
+                        fontSize: 40.0
+                      )),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Slider(
+                              value: userWeight,
+                              activeColor: Colors.green,
+                              min: 0.0,
+                              max: 150.0,
+                              divisions: 150,
+                              onChanged: ((double d) {
+                                setState(() {
+                                  userWeight = d;
+                                });
+                              })),
+                          Text(userWeight.round().toString(), style: TextStyle(
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.w200
+                          ))
+                        ],
+                      ),
+                    ],
+                  ),
                   height: 125,
                 ),
               ),
