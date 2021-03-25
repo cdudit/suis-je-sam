@@ -10,7 +10,6 @@ class Informations extends StatefulWidget {
 class _InformationsState extends State<Informations> {
   double cardElevation = 10.0;
   int userWeight;
-  int userHeight;
   int userGender;
 
   @override
@@ -20,7 +19,6 @@ class _InformationsState extends State<Informations> {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         userWeight = prefs.getInt('userWeight') ?? null;
-        userHeight = prefs.getInt('userHeight') ?? null;
         userGender = prefs.getInt('userGender') ?? null;
       });
     });
@@ -28,6 +26,7 @@ class _InformationsState extends State<Informations> {
 
   @override
   Widget build(BuildContext context) {
+    Size mqSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("Vos informations"),
@@ -35,10 +34,9 @@ class _InformationsState extends State<Informations> {
           TextButton(
             onPressed: () {
               if (userGender != null &&
-                  userHeight != null &&
                   userWeight != null) {
                 SharedTools()
-                    .sendUserInformations(userWeight, userHeight, userGender);
+                    .sendUserInformations(userWeight, userGender);
                 Navigator.pop(context);
               } else {
                 /// Affichage d'une erreur si toutes les informations ne sont pas remplies
@@ -77,6 +75,7 @@ class _InformationsState extends State<Informations> {
                 shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
+                  height: mqSize.height / 4,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -101,11 +100,12 @@ class _InformationsState extends State<Informations> {
                 shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
+                  height: mqSize.height / 4,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      cardPicture('images/weight.png', 4),
+                      cardPicture('images/weight.png', 3),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -123,38 +123,6 @@ class _InformationsState extends State<Informations> {
                           infosResult((userWeight != null)
                               ? (userWeight.toString() + ' kg')
                               : '0 kg')
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                shape: cardRadius(),
-                elevation: cardElevation,
-                child: Container(
-                  padding: cardPadding(),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      cardPicture('images/height.png', 4),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Slider(
-                              value: (userHeight != null)
-                                  ? userHeight.toDouble()
-                                  : 140.0,
-                              activeColor: Colors.green,
-                              min: 140.0,
-                              max: 210.0,
-                              divisions: 70,
-                              onChanged: ((double d) {
-                                setState(() => userHeight = d.round());
-                              })),
-                          infosResult((userHeight != null)
-                              ? (userHeight.toString() + ' cm')
-                              : '140 cm'),
                         ],
                       ),
                     ],

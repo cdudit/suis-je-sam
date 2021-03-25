@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -8,6 +9,20 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   double taux = 0.0;
   int drinked = 0;
+  int userWeight;
+  double userGenderTx;
+
+  @override
+  void initState() {
+    super.initState();
+    // Récupération des informations dans les shared préférences
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        userWeight = prefs.getInt('userWeight');
+        userGenderTx = (prefs.getInt('userGender') == 0) ? 0.7 : 0.6;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +82,9 @@ class _DashboardState extends State<Dashboard> {
                     )),
               ),
               Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0)
+                ),
                 elevation: 10.0,
                 child: Container(
                   height: mqSize.height / 3,
@@ -86,8 +104,8 @@ class _DashboardState extends State<Dashboard> {
 
   void incrementTaux() {
     setState(() {
-      taux += 0.2;
       drinked++;
+      taux = (drinked * 10) / (userWeight * userGenderTx);
     });
   }
 

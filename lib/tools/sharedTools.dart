@@ -2,10 +2,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedTools {
   /// Envoie des données dans les shared préférences pour la sauvegarde
-  void sendUserInformations(int userWeight, int userHeight, int gender) async {
+  void sendUserInformations(int userWeight, int gender) async {
     await SharedPreferences.getInstance().then((prefs) {
       prefs.setInt('userWeight', userWeight);
-      prefs.setInt('userHeight', userHeight);
       prefs.setInt('userGender', gender);
     });
   }
