@@ -30,8 +30,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double cardElevation = 10.0;
-  double userWeight = 0.0;
-  double userHeight = 0.0;
+  double userWeight;
+  double userHeight;
+  int manOrWoman;
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +49,43 @@ class _MyHomePageState extends State<MyHomePage> {
               Card(
                 elevation: cardElevation,
                 child: Container(
-                  height: 125,
+                  padding: cardPadding(),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InkWell(
+                        child: cardPicture('images/man.png', 3),
+                        onTap: (() {
+                          setState(() {
+                            manOrWoman = 0;
+                          });
+                        }),
+                      ),
+                      InkWell(
+                        child: cardPicture('images/woman.png', 3),
+                        onTap: (() {
+                          setState(() {
+                            manOrWoman = 1;
+                          });
+                        }),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Card(
                 elevation: cardElevation,
                 child: Container(
+                  padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      infosTitle("Poids"),
+                      cardPicture('images/weight.png', 4),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Slider(
-                              value: userWeight,
+                              value: userWeight ?? 0.0,
                               activeColor: Colors.green,
                               min: 0.0,
                               max: 150.0,
@@ -72,37 +95,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                   userWeight = d;
                                 });
                               })),
-                          infosResult(userWeight.round().toString())
+                          infosResult((userWeight != null) ? userWeight.round().toString() : '0')
                         ],
                       ),
                     ],
                   ),
-                  height: 125,
                 ),
               ),
               Card(
                 elevation: cardElevation,
                 child: Container(
-                  height: 125,
+                  padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      infosTitle("Taille"),
+                      cardPicture('images/height.png', 4),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Slider(
-                              value: userHeight,
+                              value: userHeight ?? 140.0,
                               activeColor: Colors.green,
-                              min: 0.0,
-                              max: 150.0,
-                              divisions: 150,
+                              min: 140.0,
+                              max: 210.0,
+                              divisions: 70,
                               onChanged: ((double d) {
                                 setState(() {
                                   userHeight = d;
                                 });
                               })),
-                          infosResult(userHeight.round().toString()),
+                          infosResult((userHeight != null) ? userHeight.round().toString() : '140'),
                         ],
                       ),
                     ],
@@ -113,22 +135,27 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: null,
-        child: Icon(
-          Icons.check,
-          color: Colors.white,
-          size: 40.0,
-        ),
-      ),
     );
   }
 
+  /// Affichage d'une image dans les bonnes dimensions pour l'écran
+  Image cardPicture(String path, int divider) {
+    return Image.asset(path,
+        width: MediaQuery.of(context).size.width / divider,
+        fit: BoxFit.cover);
+  }
+
+  /// Gestion du padding des cartes
+  EdgeInsets cardPadding() {
+    return EdgeInsets.only(top: 10.0, bottom: 10.0);
+  }
+
+  /// Affichage du titre pour demander une information personnelle
   Text infosTitle(String text) {
     return Text(text, style: TextStyle(fontSize: 40.0));
   }
 
+  /// Affichage du résultat pour afficher le résultat d'un des sliders
   Text infosResult(String text) {
     return Text(text,
         style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w200));
