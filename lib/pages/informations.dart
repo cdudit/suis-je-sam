@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Informations extends StatefulWidget {
   Informations({Key key, this.title}) : super(key: key);
@@ -26,6 +27,7 @@ class _InformationsState extends State<Informations> {
               if (manOrWoman != null &&
                   userHeight != null &&
                   userWeight != null) {
+                sendToShared();
               } else {
                 /// Affichage d'une erreur si toutes les informations ne sont pas remplies
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -152,6 +154,14 @@ class _InformationsState extends State<Informations> {
         ),
       ),
     );
+  }
+
+  /// Envoie des données dans les shared préférences pour la sauvegarde
+  void sendToShared() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setInt('weight', userWeight.round());
+    await sharedPreferences.setInt('height', userHeight.round());
+    await sharedPreferences.setInt('manOrWoman', manOrWoman);
   }
 
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
