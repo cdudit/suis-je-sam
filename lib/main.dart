@@ -8,17 +8,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  bool informationsAlreadyIn = false;
 
   @override
   Widget build(BuildContext context) {
-    if (SharedTools().getUserGender() != null &&
-        SharedTools().getUserHeight() != null &&
-        SharedTools().getUserWeight() != null
-    ) {
-      informationsAlreadyIn = true;
-    }
-
     return MaterialApp(
       routes: {
         '/informations': (context) => Informations(),
@@ -30,8 +22,7 @@ class MyApp extends StatelessWidget {
           ThemeData(primarySwatch: Colors.blue, brightness: Brightness.light),
       darkTheme: ThemeData(brightness: Brightness.dark),
       themeMode: ThemeMode.dark,
-      home: (informationsAlreadyIn) ? Dashboard() : Informations(),
+      home: Dashboard()
     );
   }
 }
-

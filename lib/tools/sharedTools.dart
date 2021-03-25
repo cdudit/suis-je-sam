@@ -1,30 +1,19 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedTools {
-
   /// Envoie des données dans les shared préférences pour la sauvegarde
-  void sendUserInformations(int userWeight, int userHeight, int manOrWoman) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.setInt('weight', userWeight);
-    await sharedPreferences.setInt('height', userHeight);
-    await sharedPreferences.setInt('manOrWoman', manOrWoman);
+  void sendUserInformations(int userWeight, int userHeight, int gender) async {
+    await SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt('userWeight', userWeight);
+      prefs.setInt('userHeight', userHeight);
+      prefs.setInt('userGender', gender);
+      prefs.setBool('alreadyIn', true);
+    });
   }
 
-  /// Récupération du poids de l'utilisateur
-  Future<int> getUserWeight() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getInt('weight') ?? null;
-  }
-
-  /// Récupération de la taille de l'utilisateur
-  Future<int> getUserHeight() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getInt('height') ?? null;
-  }
-
-  /// Récupération du genre de l'utilisateur
-  Future<int> getUserGender() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getInt('manOrWoman') ?? null;
+  /// Renvoie le booléen pour savoir si l'utilisateur a déjà enregistré ses données
+  Future<bool> isAlreadyIn() async {
+    return await SharedPreferences.getInstance()
+        .then((pref) => pref.getBool('alreadyIn'));
   }
 }

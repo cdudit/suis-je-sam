@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suis_je_sam/tools/sharedTools.dart';
 
 class Informations extends StatefulWidget {
@@ -8,9 +9,22 @@ class Informations extends StatefulWidget {
 
 class _InformationsState extends State<Informations> {
   double cardElevation = 10.0;
-  double userWeight;
-  double userHeight;
-  int manOrWoman;
+  int userWeight;
+  int userHeight;
+  int userGender;
+
+  @override
+  void initState() {
+    super.initState();
+    // Récupération des informations dans les shared préférences
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        userWeight = prefs.getInt('userWeight') ?? null;
+        userHeight = prefs.getInt('userHeight') ?? null;
+        userGender = prefs.getInt('userGender') ?? null;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +34,12 @@ class _InformationsState extends State<Informations> {
         actions: [
           TextButton(
             onPressed: () {
-              if (manOrWoman != null &&
+              if (userGender != null &&
                   userHeight != null &&
                   userWeight != null) {
-                SharedTools().sendUserInformations(userWeight.round(), userHeight.round(), manOrWoman);
-                Navigator.pushNamed(context, '/dashboard');
+                SharedTools()
+                    .sendUserInformations(userWeight, userHeight, userGender);
+                Navigator.pop(context);
               } else {
                 /// Affichage d'une erreur si toutes les informations ne sont pas remplies
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -42,7 +57,8 @@ class _InformationsState extends State<Informations> {
                           ),
                           Text(
                             'Veuillez saisir toutes les informations',
-                            style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15.0),
                           )
                         ])));
               }
@@ -67,17 +83,13 @@ class _InformationsState extends State<Informations> {
                       InkWell(
                         child: cardPicture('images/man.png', 3),
                         onTap: (() {
-                          setState(() {
-                            manOrWoman = 0;
-                          });
+                          setState(() => userGender = 0);
                         }),
                       ),
                       InkWell(
                         child: cardPicture('images/woman.png', 3),
                         onTap: (() {
-                          setState(() {
-                            manOrWoman = 1;
-                          });
+                          setState(() => userGender = 1);
                         }),
                       )
                     ],
@@ -96,18 +108,18 @@ class _InformationsState extends State<Informations> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Slider(
-                              value: userWeight ?? 0.0,
+                              value: (userWeight != null)
+                                  ? userWeight.toDouble()
+                                  : 0.0,
                               activeColor: Colors.green,
                               min: 0.0,
                               max: 150.0,
                               divisions: 150,
                               onChanged: ((double d) {
-                                setState(() {
-                                  userWeight = d;
-                                });
+                                setState(() => userWeight = d.round());
                               })),
                           infosResult((userWeight != null)
-                              ? userWeight.round().toString()
+                              ? userWeight.toString()
                               : '0')
                         ],
                       ),
@@ -127,18 +139,18 @@ class _InformationsState extends State<Informations> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Slider(
-                              value: userHeight ?? 140.0,
+                              value: (userHeight != null)
+                                  ? userHeight.toDouble()
+                                  : 140.0,
                               activeColor: Colors.green,
                               min: 140.0,
                               max: 210.0,
                               divisions: 70,
                               onChanged: ((double d) {
-                                setState(() {
-                                  userHeight = d;
-                                });
+                                setState(() => userHeight = d.round());
                               })),
                           infosResult((userHeight != null)
-                              ? userHeight.round().toString()
+                              ? userHeight.toString()
                               : '140'),
                         ],
                       ),
