@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Informations extends StatefulWidget {
-  Informations({Key key, this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _InformationsState createState() => _InformationsState();
 }
@@ -20,7 +16,7 @@ class _InformationsState extends State<Informations> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("Vos informations"),
         actions: [
           TextButton(
             onPressed: () {
