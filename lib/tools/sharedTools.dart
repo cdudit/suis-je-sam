@@ -7,7 +7,6 @@ class SharedTools {
       prefs.setInt('userWeight', userWeight);
       prefs.setInt('userHeight', userHeight);
       prefs.setInt('userGender', gender);
-      prefs.setBool('alreadyIn', true);
     });
   }
 
