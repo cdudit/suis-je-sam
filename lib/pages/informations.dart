@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suis_je_sam/tools/sharedTools.dart';
 
 class Informations extends StatefulWidget {
@@ -25,6 +24,7 @@ class _InformationsState extends State<Informations> {
                   userHeight != null &&
                   userWeight != null) {
                 SharedTools().sendUserInformations(userWeight.round(), userHeight.round(), manOrWoman);
+                Navigator.pushNamed(context, '/dashboard');
               } else {
                 /// Affichage d'une erreur si toutes les informations ne sont pas remplies
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(

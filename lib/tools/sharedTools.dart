@@ -13,18 +13,18 @@ class SharedTools {
   /// Récupération du poids de l'utilisateur
   Future<int> getUserWeight() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getInt('weight');
+    return sharedPreferences.getInt('weight') ?? null;
   }
 
   /// Récupération de la taille de l'utilisateur
   Future<int> getUserHeight() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getInt('height');
+    return sharedPreferences.getInt('height') ?? null;
   }
 
   /// Récupération du genre de l'utilisateur
   Future<int> getUserGender() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getInt('manOrWoman');
+    return sharedPreferences.getInt('manOrWoman') ?? null;
   }
 }
