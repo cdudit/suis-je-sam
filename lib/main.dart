@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double cardElevation = 10.0;
   double userWeight = 0.0;
+  double userHeight = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text("Poids", style: TextStyle(
-                        fontSize: 40.0
-                      )),
+                      infosTitle("Poids"),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -73,10 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   userWeight = d;
                                 });
                               })),
-                          Text(userWeight.round().toString(), style: TextStyle(
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.w200
-                          ))
+                          infosResult(userWeight.round().toString())
                         ],
                       ),
                     ],
@@ -88,6 +84,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 elevation: cardElevation,
                 child: Container(
                   height: 125,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      infosTitle("Taille"),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Slider(
+                              value: userHeight,
+                              activeColor: Colors.green,
+                              min: 0.0,
+                              max: 150.0,
+                              divisions: 150,
+                              onChanged: ((double d) {
+                                setState(() {
+                                  userHeight = d;
+                                });
+                              })),
+                          infosResult(userHeight.round().toString()),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -104,5 +123,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Text infosTitle(String text) {
+    return Text(text, style: TextStyle(fontSize: 40.0));
+  }
+
+  Text infosResult(String text) {
+    return Text(text,
+        style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w200));
   }
 }
