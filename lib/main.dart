@@ -39,6 +39,36 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          TextButton(
+            onPressed: () {
+              if (manOrWoman != null &&
+                  userHeight != null &&
+                  userWeight != null) {
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Icon(
+                              Icons.warning,
+                              color: Colors.white,
+                              size: 25.0,
+                            ),
+                            padding: EdgeInsets.only(right: 10.0),
+                          ),
+                          Text(
+                            'Veuillez saisir toutes les informations',
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ])));
+              }
+            },
+            child: Text("Sauvegarder", style: TextStyle(color: Colors.blue)),
+          )
+        ],
       ),
       body: Center(
         child: Container(
@@ -95,7 +125,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   userWeight = d;
                                 });
                               })),
-                          infosResult((userWeight != null) ? userWeight.round().toString() : '0')
+                          infosResult((userWeight != null)
+                              ? userWeight.round().toString()
+                              : '0')
                         ],
                       ),
                     ],
@@ -124,7 +156,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   userHeight = d;
                                 });
                               })),
-                          infosResult((userHeight != null) ? userHeight.round().toString() : '140'),
+                          infosResult((userHeight != null)
+                              ? userHeight.round().toString()
+                              : '140'),
                         ],
                       ),
                     ],
@@ -141,8 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
   Image cardPicture(String path, int divider) {
     return Image.asset(path,
-        width: MediaQuery.of(context).size.width / divider,
-        fit: BoxFit.cover);
+        width: MediaQuery.of(context).size.width / divider, fit: BoxFit.cover);
   }
 
   /// Gestion du padding des cartes
