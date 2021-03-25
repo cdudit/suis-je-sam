@@ -9,7 +9,15 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Tableau de bord")),
+      appBar: AppBar(
+          title: Text("Tableau de bord"),
+        actions: [
+          TextButton(
+              onPressed: (() => Navigator.pushNamed(context, '/informations')),
+              child: Text("Informations")
+          )
+        ],
+      ),
       body: Center(),
     );
   }
