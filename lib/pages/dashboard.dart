@@ -109,7 +109,55 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.transparent,
+        onPressed: helpDialog,
+        child: Icon(Icons.help, size: 55, color: Colors.white),
+      ),
     );
+  }
+
+  void helpDialog() {
+    AlertDialog alert = AlertDialog(
+      title: Text("Aide", style: TextStyle(fontSize: 35.0)),
+        content: Container(
+          height: mqSize.height / 5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Image.asset('images/beer.png', width: mqSize.width / 6),
+                  Container(
+                    width: mqSize.width / 2,
+                    child: helpText('Une bière de 8°, vous choisissez la quantité ensuite.'),
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Image.asset('images/wine.png', width: mqSize.width / 6),
+                  Container(
+                    width: mqSize.width / 2,
+                    child: helpText('Un verre de vin de 14cL à 12°'),
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+    showDialog(
+      context: context,
+      builder: ((BuildContext context) => alert),
+    );
+  }
+
+  /// Retourne le text avec style du centre d'aide
+  Text helpText(String data) {
+    return Text(data, style: TextStyle(fontSize: 20));
   }
 
   /// Augmentation du taux d'alcoolémie
