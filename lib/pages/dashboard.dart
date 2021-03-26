@@ -38,10 +38,7 @@ class _DashboardState extends State<Dashboard> {
               iconSize: 30),
           IconButton(
               onPressed: (() => Navigator.pushNamed(context, '/informations')),
-              icon: Icon(
-                Icons.account_circle,
-                color: Colors.white,
-              ),
+              icon: Icon(Icons.account_circle, color: Colors.white),
               iconSize: 30)
         ],
       ),
@@ -53,8 +50,7 @@ class _DashboardState extends State<Dashboard> {
             children: [
               Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)
-                ),
+                    borderRadius: BorderRadius.circular(20.0)),
                 elevation: 10.0,
                 child: InkWell(
                     onTap: (() => incrementTaux()),
@@ -74,7 +70,8 @@ class _DashboardState extends State<Dashboard> {
                               backgroundColor: Colors.white,
                               onPressed: null,
                               child: Text(drinked.toString(),
-                                  style: TextStyle(fontSize: 30, color: Colors.grey[800])),
+                                  style: TextStyle(
+                                      fontSize: 30, color: Colors.grey[800])),
                             ),
                           )
                         ],
@@ -83,8 +80,7 @@ class _DashboardState extends State<Dashboard> {
               ),
               Card(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)
-                ),
+                    borderRadius: BorderRadius.circular(20.0)),
                 elevation: 10.0,
                 child: Container(
                   height: mqSize.height / 3,
@@ -105,7 +101,7 @@ class _DashboardState extends State<Dashboard> {
   void incrementTaux() {
     setState(() {
       drinked++;
-      taux = (drinked * 10) / (userWeight * userGenderTx);
+      taux = (drinked * 250 * 0.08 * 0.8) / (userWeight * userGenderTx);
     });
   }
 
