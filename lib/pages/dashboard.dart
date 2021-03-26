@@ -163,8 +163,6 @@ class _DashboardState extends State<Dashboard> {
                           style: TextStyle(fontSize: 80)),
                       Center(
                         child: Text(
-                          (currentTx <= 0.5) ?
-                          "Vous êtes en dessous de la limite autorisée" :
                           formatRestToDecuve(),
                           style: TextStyle(fontSize: 20),
                         ),
@@ -283,6 +281,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  /// Calcul pour savoir 
   void calculRestToDecuve() {
     setState(() {
       restToDecuve = 0;
@@ -296,15 +295,20 @@ class _DashboardState extends State<Dashboard> {
   }
 
   String formatRestToDecuve() {
+    if (currentTx == 0) {
+      return 'Ajoutez un verre pour commencer';
+    }
+    if (currentTx <= 0.5) {
+      return 'Vous êtes en dessous de la limite';
+    }
     int hour = 0;
     int min = 0;
-    while(restToDecuve > 0) {
+    for(int tmp = restToDecuve; tmp > 0; tmp--) {
       min += 15;
       if (min == 60) {
         hour++;
         min = 0;
       }
-      restToDecuve--;
     }
     return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
