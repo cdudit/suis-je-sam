@@ -81,13 +81,13 @@ class _InformationsState extends State<Informations> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InkWell(
-                        child: cardPicture('images/man.png', 3),
+                        child: cardPicture('images/man.png', 3, 0),
                         onTap: (() {
                           setState(() => userGender = 0);
                         }),
                       ),
                       InkWell(
-                        child: cardPicture('images/woman.png', 3),
+                        child: cardPicture('images/woman.png', 3, 1),
                         onTap: (() {
                           setState(() => userGender = 1);
                         }),
@@ -105,7 +105,7 @@ class _InformationsState extends State<Informations> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      cardPicture('images/weight.png', 4),
+                      cardPicture('images/weight.png', 4, false),
                       Container(
                         width: mqSize.width / 1.75,
                         child: Column(
@@ -114,9 +114,9 @@ class _InformationsState extends State<Informations> {
                             Slider(
                                 value: (userWeight != null)
                                     ? userWeight.toDouble()
-                                    : 0.0,
+                                    : 1.0,
                                 activeColor: Colors.green,
-                                min: 0.0,
+                                min: 1.0,
                                 max: 150.0,
                                 divisions: 150,
                                 onChanged: ((double d) {
@@ -145,9 +145,15 @@ class _InformationsState extends State<Informations> {
   }
 
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
-  Image cardPicture(String path, int divider) {
-    return Image.asset(path,
-        width: MediaQuery.of(context).size.width / divider, fit: BoxFit.cover);
+  Card cardPicture(String path, int divider, myUserGender) {
+    return Card(
+      elevation: (userGender == myUserGender) ? 20.0 : 0.0,
+      child: Container(
+        padding: EdgeInsets.all(5.0),
+        child: Image.asset(path,
+            width: MediaQuery.of(context).size.width / divider, fit: BoxFit.cover)
+      )
+    );
   }
 
   /// Gestion du padding des cartes
