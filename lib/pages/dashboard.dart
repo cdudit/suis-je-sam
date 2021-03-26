@@ -22,6 +22,7 @@ class _DashboardState extends State<Dashboard> {
   int currentDate;
   Timer timer;
   bool isEmptyStomach = false;
+  int restToDecuve = 0;
   List<dynamic> helps = [ // Liste des textes et images à mettre dans le centre d'aide
     {
       'image': 'images/beer.png',
@@ -31,6 +32,10 @@ class _DashboardState extends State<Dashboard> {
     {
       'image': 'images/eating.png',
       'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
+    },
+    {
+      'image': 'images/warning.png',
+      'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un éthylotest.'
     }
   ];
 
@@ -136,6 +141,7 @@ class _DashboardState extends State<Dashboard> {
                       alignment: Alignment(0.9, -1.0),
                       heightFactor: 0.5,
                       child: FloatingActionButton(
+                        heroTag: "counterBtn",
                         backgroundColor: Colors.white,
                         onPressed: null,
                         child: Text(drinked.toString(),
@@ -150,9 +156,20 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   height: mqSize.height / 4,
                   width: mqSize.width,
-                  child: Center(
-                    child: Text("${currentTx.toStringAsFixed(2)} g/L",
-                        style: TextStyle(fontSize: 80)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("${currentTx.toStringAsFixed(2)} g/L",
+                          style: TextStyle(fontSize: 80)),
+                      Center(
+                        child: Text(
+                          (currentTx <= 0.5) ?
+                          "Vous êtes en dessous de la limite autorisée" :
+                          formatRestToDecuve(),
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               )
@@ -161,6 +178,7 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "helpBtn",
         backgroundColor: Colors.transparent,
         onPressed: helpDialog,
         child: Icon(Icons.help, size: 55, color: Colors.white),
@@ -204,6 +222,7 @@ class _DashboardState extends State<Dashboard> {
         children: [
           Image.asset(element['image'], width: mqSize.width / 7),
           Container(
+            padding: EdgeInsets.only(left: 5.0),
             width: mqSize.width / 2,
             child: Text(element['text'], style: TextStyle(fontSize: 18))
           )
@@ -259,8 +278,35 @@ class _DashboardState extends State<Dashboard> {
             currentTx = 0;
           }
         }
+        calculRestToDecuve();
       });
     }
+  }
+
+  void calculRestToDecuve() {
+    setState(() {
+      restToDecuve = 0;
+      double calculTx = currentTx;
+      while(calculTx > 0.5) {
+        calculTx -= (userGenderTx == 0.7) ? 0.025 : 0.02125;
+        restToDecuve++;
+      }
+      restToDecuve += (isEmptyStomach == true) ? 2 : 4;
+    });
+  }
+
+  String formatRestToDecuve() {
+    int hour = 0;
+    int min = 0;
+    while(restToDecuve > 0) {
+      min += 15;
+      if (min == 60) {
+        hour++;
+        min = 0;
+      }
+      restToDecuve--;
+    }
+    return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
 
   /// Affichage du dialog pour choisir la quantité
@@ -321,6 +367,7 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       currentTx = 0.0;
       rawTx = 0.0;
+      restToDecuve = 0;
       drinked = 0;
     });
   }
