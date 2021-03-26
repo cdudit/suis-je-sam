@@ -194,7 +194,7 @@ class _DashboardState extends State<Dashboard> {
       elevation: cardElevation,
       title: Text("Aide", style: TextStyle(fontSize: 35.0)),
       content: Container(
-        height: mqSize.height / 3,
+        height: mqSize.height / 2.75,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: helpList())
@@ -215,16 +215,23 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> helpList() {
     List<Widget> rows = [];
     helps.forEach((element) {
-      rows.add(new Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Image.asset(element['image'], width: mqSize.width / 7),
-          Container(
-            padding: EdgeInsets.only(left: 5.0),
-            width: mqSize.width / 2,
-            child: Text(element['text'], style: TextStyle(fontSize: 18))
-          )
-        ],
+      rows.add(Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        elevation: 10.0,
+        child: Container(
+          padding: EdgeInsets.all(5.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(element['image'], width: mqSize.width / 8),
+              Container(
+                  padding: EdgeInsets.only(left: 5.0),
+                  width: mqSize.width / 2,
+                  child: Text(element['text'], style: TextStyle(fontSize: 18))
+              )
+            ],
+          ),
+        ),
       ));
     });
     return rows;
