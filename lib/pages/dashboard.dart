@@ -10,24 +10,27 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  double taux = 0.0;
+  double currentTx = 0.0;
+  double rawTx = 0.0;
   int drinked = 0;
   int userWeight;
   double userGenderTx;
+  double cardElevation = 10.0;
   Size mqSize;
   int startDate;
   int currentDate;
   Timer timer;
 
+  // Lors de l'initialisation
   @override
   void initState() {
     super.initState();
     // Récupération des informations dans les shared préférences
     getShared();
-    timer = Timer.periodic(
-        Duration(seconds: 60), (Timer t) => calculTauxEveryMinute());
+    timer = Timer.periodic(Duration(seconds: 60), (Timer t) => decrementTaux());
   }
 
+  // Lors d'une mise en arrière plan
   @override
   void dispose() {
     timer?.cancel();
@@ -63,7 +66,7 @@ class _DashboardState extends State<Dashboard> {
             children: [
               Card(
                   shape: roundedShape(),
-                  elevation: 10.0,
+                  elevation: cardElevation,
                   child: Column(children: [
                     Center(
                       child: Row(
@@ -104,12 +107,12 @@ class _DashboardState extends State<Dashboard> {
                   ])),
               Card(
                 shape: roundedShape(),
-                elevation: 10.0,
+                elevation: cardElevation,
                 child: Container(
                   height: mqSize.height / 3,
                   width: mqSize.width,
                   child: Center(
-                    child: Text("${taux.toStringAsFixed(2)} g/L",
+                    child: Text("${currentTx.toStringAsFixed(2)} g/L",
                         style: TextStyle(fontSize: 80)),
                   ),
                 ),
@@ -133,6 +136,7 @@ class _DashboardState extends State<Dashboard> {
   void helpDialog() {
     AlertDialog alert = AlertDialog(
         shape: roundedShape(),
+        elevation: cardElevation,
         title: Text("Aide", style: TextStyle(fontSize: 35.0)),
         content: Container(
           height: mqSize.height / 5,
@@ -190,20 +194,22 @@ class _DashboardState extends State<Dashboard> {
 
       // Calcul du taux
       // ((mL * degrés * densité de l'alcool) / (poids * taux)) - (txElimination * (nbQuartHeureMtn-nbQuartHeurePremierVerre))
-      taux += ((mL * degree * 0.8) / (userWeight * userGenderTx)) -
-          (((userGenderTx == 0.7) ? 0.025 : 0.02125) *
-              (currentDate - startDate));
+      rawTx += (mL * degree * 0.8) / (userWeight * userGenderTx);
+      decrementTaux();
     });
   }
 
   /// Calcul du taux toutes les minutes
-  void calculTauxEveryMinute() {
-    if (drinked > 0) {
+  void decrementTaux() {
+    if (drinked > 0 && rawTx > 0) {
       setState(() {
         currentDate =
             (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
-        taux -= ((userGenderTx == 0.7) ? 0.025 : 0.02125) *
+        currentTx = rawTx - ((userGenderTx == 0.7) ? 0.025 : 0.02125) *
             (currentDate - startDate);
+        if (currentTx < 0) {
+          currentTx = 0;
+        }
       });
     }
   }
@@ -212,6 +218,7 @@ class _DashboardState extends State<Dashboard> {
   void displayDialog() {
     // Création du dialog
     AlertDialog alert = AlertDialog(
+        elevation: cardElevation,
         shape: roundedShape(),
         content: Container(
           child: Row(
@@ -263,7 +270,8 @@ class _DashboardState extends State<Dashboard> {
   /// Remise à zéro
   void refresh() {
     setState(() {
-      taux = 0.0;
+      currentTx = 0.0;
+      rawTx = 0.0;
       drinked = 0;
     });
   }
