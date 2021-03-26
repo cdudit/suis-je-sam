@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:ffi';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,17 +11,43 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  double taux = 0.0;
+  double currentTx = 0.0;
+  double rawTx = 0.0;
   int drinked = 0;
   int userWeight;
   double userGenderTx;
+  double cardElevation = 10.0;
   Size mqSize;
+  int startDate;
+  int currentDate;
+  Timer timer;
+  bool isEmptyStomach = false;
+  List<dynamic> helps = [ // Liste des textes et images à mettre dans le centre d'aide
+    {
+      'image': 'images/beer.png',
+      'text': 'Une bière de 8°, vous choisissez la quantité ensuite.'
+    },
+    {'image': 'images/wine.png', 'text': 'Un verre de vin de 14cL à 12°.'},
+    {
+      'image': 'images/eating.png',
+      'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
+    }
+  ];
 
+  // Lors de l'initialisation
   @override
   void initState() {
     super.initState();
     // Récupération des informations dans les shared préférences
     getShared();
+    timer = Timer.periodic(Duration(seconds: 60), (Timer t) => decrementTaux());
+  }
+
+  // Lors d'une mise en arrière plan
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -50,8 +78,34 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Card(
+                shape: roundedShape(),
+                elevation: cardElevation,
+                child: Container(
+                    child: MergeSemantics(
+                  child: ListTile(
+                    title: Text('Je suis à jeun',
+                        style: TextStyle(fontSize: 25.0)),
+                    trailing: CupertinoSwitch(
+                      value: isEmptyStomach,
+                      onChanged: (bool value) {
+                        setState(() {
+                          isEmptyStomach = value;
+                          decrementTaux();
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      setState(() {
+                        isEmptyStomach = !isEmptyStomach;
+                        decrementTaux();
+                      });
+                    },
+                  ),
+                )),
+              ),
+              Card(
                   shape: roundedShape(),
-                  elevation: 10.0,
+                  elevation: cardElevation,
                   child: Column(children: [
                     Center(
                       child: Row(
@@ -86,19 +140,18 @@ class _DashboardState extends State<Dashboard> {
                         onPressed: null,
                         child: Text(drinked.toString(),
                             style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.grey[800])),
+                                fontSize: 30, color: Colors.grey[800])),
                       ),
                     )
                   ])),
               Card(
                 shape: roundedShape(),
-                elevation: 10.0,
+                elevation: cardElevation,
                 child: Container(
-                  height: mqSize.height / 3,
+                  height: mqSize.height / 4,
                   width: mqSize.width,
                   child: Center(
-                    child: Text("${taux.toStringAsFixed(2)} g/L",
+                    child: Text("${currentTx.toStringAsFixed(2)} g/L",
                         style: TextStyle(fontSize: 80)),
                   ),
                 ),
@@ -116,42 +169,25 @@ class _DashboardState extends State<Dashboard> {
   }
 
   RoundedRectangleBorder roundedShape() {
-    return RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0));
+    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0));
   }
 
   void helpDialog() {
     AlertDialog alert = AlertDialog(
       shape: roundedShape(),
+      elevation: cardElevation,
       title: Text("Aide", style: TextStyle(fontSize: 35.0)),
-        content: Container(
-          height: mqSize.height / 5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Image.asset('images/beer.png', width: mqSize.width / 6),
-                  Container(
-                    width: mqSize.width / 2,
-                    child: helpText('Une bière de 8°, vous choisissez la quantité ensuite.'),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Image.asset('images/wine.png', width: mqSize.width / 6),
-                  Container(
-                    width: mqSize.width / 2,
-                    child: helpText('Un verre de vin de 14cL à 12°'),
-                  )
-                ],
-              )
-            ],
-          ),
-        )
+      content: Container(
+        height: mqSize.height / 3,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: helpList())
+      ),
+      actions: [
+        TextButton(
+            onPressed: (() => Navigator.pop(context)),
+            child: Text("OK", style: TextStyle(fontSize: 20)))
+      ],
     );
     showDialog(
       context: context,
@@ -159,50 +195,105 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  /// Retourne le text avec style du centre d'aide
-  Text helpText(String data) {
-    return Text(data, style: TextStyle(fontSize: 20));
+  /// Retourne la liste de widgets à mettre dans le centre d'aide
+  List<Widget> helpList() {
+    List<Widget> rows = [];
+    helps.forEach((element) {
+      rows.add(new Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image.asset(element['image'], width: mqSize.width / 7),
+          Container(
+            width: mqSize.width / 2,
+            child: Text(element['text'], style: TextStyle(fontSize: 18))
+          )
+        ],
+      ));
+    });
+    return rows;
   }
 
   /// Augmentation du taux d'alcoolémie
   void incrementTaux(int mL, double degree) {
     setState(() {
+      if (drinked == 0) {
+        // Récupération du timestamp du premier verre bu
+        startDate =
+            (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
+      }
+      currentDate =
+          (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
+
+      // Incrémentation du nombre de verres bu
       drinked++;
-      // (mL * degrés * densité de l'alcool) / (poids * taux)
-      taux += (mL * degree * 0.8) / (userWeight * userGenderTx);
+
+      // Calcul du taux
+      // ((mL * degrés * densité de l'alcool) / (poids * taux)) - (txElimination * (nbQuartHeureMtn-nbQuartHeurePremierVerre))
+      rawTx += (mL * degree * 0.8) / (userWeight * userGenderTx);
+      currentTx = rawTx;
+      decrementTaux();
     });
+  }
+
+  /// Calcul du taux toutes les minutes
+  void decrementTaux() {
+    if (drinked > 0 && rawTx > 0) {
+      setState(() {
+        // Récupération du nombre de quarts d'heures en timestamp
+        currentDate =
+            (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
+
+        // La différence de quarts d'heure entre le premier et le dernier verre
+        int difference = currentDate - startDate;
+
+        // La descente se fait après :
+        // A jeun : 30min
+        // Pas à jeun : 60min
+        if ((isEmptyStomach == true && difference > 2) ||
+            (isEmptyStomach == false && difference > 4)) {
+          currentTx = rawTx -
+              ((userGenderTx == 0.7) ? 0.025 : 0.02125) *
+                  ((currentDate - startDate) -
+                      (isEmptyStomach == true ? 2 : 4));
+          if (currentTx < 0) {
+            currentTx = 0;
+          }
+        }
+      });
+    }
   }
 
   /// Affichage du dialog pour choisir la quantité
   void displayDialog() {
     // Création du dialog
     AlertDialog alert = AlertDialog(
-      shape: roundedShape(),
+        elevation: cardElevation,
+        shape: roundedShape(),
         content: Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextButton(
-              onPressed: (() {
-                incrementTaux(250, 0.08);
-                Navigator.pop(context);
-              }),
-              child: dialogStyle("25cl")),
-          TextButton(
-              onPressed: (() {
-                incrementTaux(330, 0.08);
-                Navigator.pop(context);
-              }),
-              child: dialogStyle("33cL")),
-          TextButton(
-              onPressed: (() {
-                incrementTaux(500, 0.08);
-                Navigator.pop(context);
-              }),
-              child: dialogStyle("50cL"))
-        ],
-      ),
-    ));
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                  onPressed: (() {
+                    incrementTaux(250, 0.08);
+                    Navigator.pop(context);
+                  }),
+                  child: dialogStyle("25cl")),
+              TextButton(
+                  onPressed: (() {
+                    incrementTaux(330, 0.08);
+                    Navigator.pop(context);
+                  }),
+                  child: dialogStyle("33cL")),
+              TextButton(
+                  onPressed: (() {
+                    incrementTaux(500, 0.08);
+                    Navigator.pop(context);
+                  }),
+                  child: dialogStyle("50cL"))
+            ],
+          ),
+        ));
     // Affichage du dialog
     showDialog(
       context: context,
@@ -228,7 +319,8 @@ class _DashboardState extends State<Dashboard> {
   /// Remise à zéro
   void refresh() {
     setState(() {
-      taux = 0.0;
+      currentTx = 0.0;
+      rawTx = 0.0;
       drinked = 0;
     });
   }
