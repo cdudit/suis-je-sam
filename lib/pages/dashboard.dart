@@ -50,8 +50,7 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
+                  shape: roundedShape(),
                   elevation: 10.0,
                   child: Column(children: [
                     Center(
@@ -93,8 +92,7 @@ class _DashboardState extends State<Dashboard> {
                     )
                   ])),
               Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)),
+                shape: roundedShape(),
                 elevation: 10.0,
                 child: Container(
                   height: mqSize.height / 3,
@@ -117,8 +115,14 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  RoundedRectangleBorder roundedShape() {
+    return RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0));
+  }
+
   void helpDialog() {
     AlertDialog alert = AlertDialog(
+      shape: roundedShape(),
       title: Text("Aide", style: TextStyle(fontSize: 35.0)),
         content: Container(
           height: mqSize.height / 5,
@@ -173,6 +177,7 @@ class _DashboardState extends State<Dashboard> {
   void displayDialog() {
     // Création du dialog
     AlertDialog alert = AlertDialog(
+      shape: roundedShape(),
         content: Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
