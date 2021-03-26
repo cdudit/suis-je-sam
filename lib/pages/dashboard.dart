@@ -50,35 +50,48 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)),
-                elevation: 10.0,
-                child: InkWell(
-                    onTap: (() => displayDialog()),
-                    child: Container(
-                      padding: EdgeInsets.only(top: 20.0),
-                      width: mqSize.width / 2,
-                      child: Column(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  elevation: 10.0,
+                  child: Column(children: [
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
-                              height: mqSize.height / 6,
-                              width: mqSize.width / 3,
-                              child: Image.asset('images/beer.png')),
-                          Align(
-                            alignment: Alignment(0.8, -1.0),
-                            heightFactor: 0.5,
-                            child: FloatingActionButton(
-                              backgroundColor: Colors.white,
-                              onPressed: null,
-                              child: Text(drinked.toString(),
-                                  style: TextStyle(
-                                      fontSize: 30, color: Colors.grey[800])),
-                            ),
-                          )
+                          InkWell(
+                              onTap: (() => displayDialog()),
+                              child: Container(
+                                padding: EdgeInsets.only(top: 20.0),
+                                child: Container(
+                                    height: mqSize.height / 6,
+                                    width: mqSize.width / 3,
+                                    child: Image.asset('images/beer.png')),
+                              )),
+                          InkWell(
+                              onTap: (() => incrementTaux(140, 0.12)),
+                              child: Container(
+                                padding: EdgeInsets.only(top: 20.0),
+                                child: Container(
+                                    height: mqSize.height / 6,
+                                    width: mqSize.width / 3,
+                                    child: Image.asset('images/wine.png')),
+                              )),
                         ],
                       ),
-                    )),
-              ),
+                    ),
+                    Align(
+                      alignment: Alignment(0.9, -1.0),
+                      heightFactor: 0.5,
+                      child: FloatingActionButton(
+                        backgroundColor: Colors.white,
+                        onPressed: null,
+                        child: Text(drinked.toString(),
+                            style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.grey[800])),
+                      ),
+                    )
+                  ])),
               Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
@@ -99,39 +112,48 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void incrementTaux(int mL) {
+  /// Augmentation du taux d'alcoolémie
+  void incrementTaux(int mL, double degree) {
     setState(() {
       drinked++;
       // (mL * degrés * densité de l'alcool) / (poids * taux)
-      taux += (mL * 0.08 * 0.8) / (userWeight * userGenderTx);
+      taux += (mL * degree * 0.8) / (userWeight * userGenderTx);
     });
-    Navigator.pop(context);
   }
 
+  /// Affichage du dialog pour choisir la quantité
   void displayDialog() {
-    // set up the AlertDialog
+    // Création du dialog
     AlertDialog alert = AlertDialog(
         content: Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextButton(
-              onPressed: (() => incrementTaux(250)),
+              onPressed: (() {
+                incrementTaux(250, 0.08);
+                Navigator.pop(context);
+              }),
               child: dialogStyle("25cl")),
           TextButton(
-              onPressed: (() => incrementTaux(333)),
+              onPressed: (() {
+                incrementTaux(330, 0.08);
+                Navigator.pop(context);
+              }),
               child: dialogStyle("33cL")),
           TextButton(
-              onPressed: (() => incrementTaux(500)), child: dialogStyle("50cL"))
+              onPressed: (() {
+                incrementTaux(500, 0.08);
+                Navigator.pop(context);
+              }),
+              child: dialogStyle("50cL"))
         ],
       ),
     ));
-    // show the dialog
+    // Affichage du dialog
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
+      builder: ((BuildContext context) => alert),
     );
   }
 
@@ -145,6 +167,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  /// Style des button text dans le dialog
   Text dialogStyle(String title) {
     return Text(title, style: TextStyle(fontSize: 35, color: Colors.white));
   }
