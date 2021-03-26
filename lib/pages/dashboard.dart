@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +13,7 @@ class _DashboardState extends State<Dashboard> {
   int drinked = 0;
   int userWeight;
   double userGenderTx;
+  Size mqSize;
 
   @override
   void initState() {
@@ -26,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    Size mqSize = MediaQuery.of(context).size;
+    mqSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +56,7 @@ class _DashboardState extends State<Dashboard> {
                     borderRadius: BorderRadius.circular(20.0)),
                 elevation: 10.0,
                 child: InkWell(
-                    onTap: (() => incrementTaux()),
+                    onTap: (() => displayDialog()),
                     child: Container(
                       padding: EdgeInsets.only(top: 20.0),
                       width: mqSize.width / 2,
@@ -98,13 +101,44 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void incrementTaux() {
+  void incrementTaux(int mL) {
     setState(() {
       drinked++;
-      taux = (drinked * 250 * 0.08 * 0.8) / (userWeight * userGenderTx);
+      // (mL * degrés * densité de l'alcool) / (poids * taux)
+      taux += (mL * 0.08 * 0.8) / (userWeight * userGenderTx);
     });
+    Navigator.pop(context);
   }
 
+  void displayDialog() {
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+        content: Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+              onPressed: (() => incrementTaux(250)), child: dialogStyle("25cl")),
+          TextButton(
+              onPressed: (() => incrementTaux(333)), child: dialogStyle("33cL")),
+          TextButton(onPressed: (() => incrementTaux(500)), child: dialogStyle("50cL"))
+        ],
+      ),
+    ));
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Text dialogStyle(String title) {
+    return Text(title, style: TextStyle(fontSize: 35, color: Colors.white));
+  }
+
+  /// Remise à zéro
   void refresh() {
     setState(() {
       taux = 0.0;

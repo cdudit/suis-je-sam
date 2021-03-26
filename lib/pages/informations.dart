@@ -11,6 +11,7 @@ class _InformationsState extends State<Informations> {
   double cardElevation = 10.0;
   int userWeight;
   int userGender;
+  Size mqSize;
 
   @override
   void initState() {
@@ -26,7 +27,7 @@ class _InformationsState extends State<Informations> {
 
   @override
   Widget build(BuildContext context) {
-    Size mqSize = MediaQuery.of(context).size;
+    mqSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("Vos informations"),
@@ -39,7 +40,7 @@ class _InformationsState extends State<Informations> {
                     .sendUserInformations(userWeight, userGender);
                 Navigator.pop(context);
               } else {
-                /// Affichage d'une erreur si toutes les informations ne sont pas remplies
+                // Affichage d'une erreur si toutes les informations ne sont pas remplies
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     backgroundColor: Colors.red,
                     content: Row(
@@ -75,7 +76,7 @@ class _InformationsState extends State<Informations> {
                 shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
-                  height: mqSize.height / 4,
+                  height: mqSize.height / 5,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -100,30 +101,33 @@ class _InformationsState extends State<Informations> {
                 shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
-                  height: mqSize.height / 4,
+                  height: mqSize.height / 5,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      cardPicture('images/weight.png', 3),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Slider(
-                              value: (userWeight != null)
-                                  ? userWeight.toDouble()
-                                  : 0.0,
-                              activeColor: Colors.green,
-                              min: 0.0,
-                              max: 150.0,
-                              divisions: 150,
-                              onChanged: ((double d) {
-                                setState(() => userWeight = d.round());
-                              })),
-                          infosResult((userWeight != null)
-                              ? (userWeight.toString() + ' kg')
-                              : '0 kg')
-                        ],
+                      cardPicture('images/weight.png', 4),
+                      Container(
+                        width: mqSize.width / 1.75,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Slider(
+                                value: (userWeight != null)
+                                    ? userWeight.toDouble()
+                                    : 0.0,
+                                activeColor: Colors.green,
+                                min: 0.0,
+                                max: 150.0,
+                                divisions: 150,
+                                onChanged: ((double d) {
+                                  setState(() => userWeight = d.round());
+                                })),
+                            infosResult((userWeight != null)
+                                ? (userWeight.toString() + ' kg')
+                                : '0 kg')
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -136,7 +140,7 @@ class _InformationsState extends State<Informations> {
     );
   }
 
-  /// Renvoie une carte arrondie
+  /// Renvoie une card arrondie
   RoundedRectangleBorder cardRadius() {
     return RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0));
   }
