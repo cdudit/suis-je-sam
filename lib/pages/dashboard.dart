@@ -22,7 +22,9 @@ class _DashboardState extends State<Dashboard> {
   int currentDate;
   Timer timer;
   bool isEmptyStomach = false;
-  List<dynamic> helps = [ // Liste des textes et images à mettre dans le centre d'aide
+  int restToDecuve = 0;
+  List<dynamic> helps = [
+    // Liste des textes et images à mettre dans le centre d'aide
     {
       'image': 'images/beer.png',
       'text': 'Une bière de 8°, vous choisissez la quantité ensuite.'
@@ -31,6 +33,10 @@ class _DashboardState extends State<Dashboard> {
     {
       'image': 'images/eating.png',
       'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
+    },
+    {
+      'image': 'images/warning.png',
+      'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
     }
   ];
 
@@ -136,6 +142,7 @@ class _DashboardState extends State<Dashboard> {
                       alignment: Alignment(0.9, -1.0),
                       heightFactor: 0.5,
                       child: FloatingActionButton(
+                        heroTag: "counterBtn",
                         backgroundColor: Colors.white,
                         onPressed: null,
                         child: Text(drinked.toString(),
@@ -150,9 +157,22 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   height: mqSize.height / 4,
                   width: mqSize.width,
-                  child: Center(
-                    child: Text("${currentTx.toStringAsFixed(2)} g/L",
-                        style: TextStyle(fontSize: 80)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("${currentTx.toStringAsFixed(2)} g/L*",
+                          style: TextStyle(fontSize: 80)),
+                      Center(
+                        child: Column(children: [
+                          Text(formatRestToDecuve(),
+                              style: TextStyle(fontSize: 22)),
+                          Text(
+                            "*Taux indicatif, ne remplace pas un alcootest",
+                            style: TextStyle(fontSize: 15),
+                          )
+                        ]),
+                      ),
+                    ],
                   ),
                 ),
               )
@@ -161,6 +181,7 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "helpBtn",
         backgroundColor: Colors.transparent,
         onPressed: helpDialog,
         child: Icon(Icons.help, size: 55, color: Colors.white),
@@ -177,12 +198,10 @@ class _DashboardState extends State<Dashboard> {
       shape: roundedShape(),
       elevation: cardElevation,
       title: Text("Aide", style: TextStyle(fontSize: 35.0)),
-      content: Container(
-        height: mqSize.height / 3,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: helpList())
-      ),
+      content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: helpList()),
       actions: [
         TextButton(
             onPressed: (() => Navigator.pop(context)),
@@ -199,15 +218,16 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> helpList() {
     List<Widget> rows = [];
     helps.forEach((element) {
-      rows.add(new Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Image.asset(element['image'], width: mqSize.width / 7),
-          Container(
-            width: mqSize.width / 2,
-            child: Text(element['text'], style: TextStyle(fontSize: 18))
-          )
-        ],
+      rows.add(Card(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        elevation: 10.0,
+        child: Container(
+            padding: EdgeInsets.all(5.0),
+            child: ListTile(
+              title: Text(element['text'], style: TextStyle(fontSize: 18)),
+              leading: Image.asset(element['image'], width: mqSize.width / 10),
+            )),
       ));
     });
     return rows;
@@ -259,8 +279,41 @@ class _DashboardState extends State<Dashboard> {
             currentTx = 0;
           }
         }
+        calculRestToDecuve();
       });
     }
+  }
+
+  /// Calcul pour savoir
+  void calculRestToDecuve() {
+    setState(() {
+      restToDecuve = 0;
+      double calculTx = currentTx;
+      while (calculTx > 0.5) {
+        calculTx -= (userGenderTx == 0.7) ? 0.025 : 0.02125;
+        restToDecuve++;
+      }
+      restToDecuve += (isEmptyStomach == true) ? 2 : 4;
+    });
+  }
+
+  String formatRestToDecuve() {
+    if (currentTx == 0) {
+      return 'Ajoutez un verre pour commencer';
+    }
+    if (currentTx <= 0.5) {
+      return 'Vous êtes en dessous de la limite';
+    }
+    int hour = 0;
+    int min = 0;
+    for (int tmp = restToDecuve; tmp > 0; tmp--) {
+      min += 15;
+      if (min == 60) {
+        hour++;
+        min = 0;
+      }
+    }
+    return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
 
   /// Affichage du dialog pour choisir la quantité
@@ -321,6 +374,7 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       currentTx = 0.0;
       rawTx = 0.0;
+      restToDecuve = 0;
       drinked = 0;
     });
   }
