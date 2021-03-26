@@ -34,11 +34,10 @@ class _InformationsState extends State<Informations> {
         actions: [
           TextButton(
             onPressed: () {
-              if (userGender != null &&
-                  userWeight != null) {
+              if (userGender != null && userWeight != null) {
                 SharedTools()
-                    .sendUserInformations(userWeight, userGender);
-                Navigator.pop(context);
+                    .sendUserInformations(userWeight, userGender)
+                    .then((value) => Navigator.pop(context));
               } else {
                 // Affichage d'une erreur si toutes les informations ne sont pas remplies
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(

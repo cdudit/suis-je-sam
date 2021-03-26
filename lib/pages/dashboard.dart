@@ -19,12 +19,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     // Récupération des informations dans les shared préférences
-    SharedPreferences.getInstance().then((prefs) {
-      setState(() {
-        userWeight = prefs.getInt('userWeight');
-        userGenderTx = (prefs.getInt('userGender') == 0) ? 0.7 : 0.6;
-      });
-    });
+    getShared();
   }
 
   @override
@@ -40,7 +35,10 @@ class _DashboardState extends State<Dashboard> {
               icon: Icon(Icons.refresh, color: Colors.white),
               iconSize: 30),
           IconButton(
-              onPressed: (() => Navigator.pushNamed(context, '/informations')),
+              onPressed: (() {
+                Navigator.pushNamed(context, '/informations')
+                    .then((_) => getShared());
+              }),
               icon: Icon(Icons.account_circle, color: Colors.white),
               iconSize: 30)
         ],
@@ -118,10 +116,13 @@ class _DashboardState extends State<Dashboard> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextButton(
-              onPressed: (() => incrementTaux(250)), child: dialogStyle("25cl")),
+              onPressed: (() => incrementTaux(250)),
+              child: dialogStyle("25cl")),
           TextButton(
-              onPressed: (() => incrementTaux(333)), child: dialogStyle("33cL")),
-          TextButton(onPressed: (() => incrementTaux(500)), child: dialogStyle("50cL"))
+              onPressed: (() => incrementTaux(333)),
+              child: dialogStyle("33cL")),
+          TextButton(
+              onPressed: (() => incrementTaux(500)), child: dialogStyle("50cL"))
         ],
       ),
     ));
@@ -132,6 +133,16 @@ class _DashboardState extends State<Dashboard> {
         return alert;
       },
     );
+  }
+
+  /// Initialisation des sharedPreferences
+  void getShared() {
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        userWeight = prefs.getInt('userWeight');
+        userGenderTx = (prefs.getInt('userGender') == 0) ? 0.7 : 0.6;
+      });
+    });
   }
 
   Text dialogStyle(String title) {
