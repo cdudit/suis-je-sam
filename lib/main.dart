@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suis_je_sam/pages/dashboard.dart';
 import 'package:suis_je_sam/pages/informations.dart';
-import 'package:suis_je_sam/tools/sharedTools.dart';
 
 void main() {
   runApp(MyApp());

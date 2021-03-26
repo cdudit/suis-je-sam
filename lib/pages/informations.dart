@@ -10,8 +10,8 @@ class Informations extends StatefulWidget {
 class _InformationsState extends State<Informations> {
   double cardElevation = 10.0;
   int userWeight;
-  int userHeight;
   int userGender;
+  Size mqSize;
 
   @override
   void initState() {
@@ -20,7 +20,6 @@ class _InformationsState extends State<Informations> {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         userWeight = prefs.getInt('userWeight') ?? null;
-        userHeight = prefs.getInt('userHeight') ?? null;
         userGender = prefs.getInt('userGender') ?? null;
       });
     });
@@ -28,20 +27,19 @@ class _InformationsState extends State<Informations> {
 
   @override
   Widget build(BuildContext context) {
+    mqSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("Vos informations"),
         actions: [
           TextButton(
             onPressed: () {
-              if (userGender != null &&
-                  userHeight != null &&
-                  userWeight != null) {
+              if (userGender != null && userWeight != null) {
                 SharedTools()
-                    .sendUserInformations(userWeight, userHeight, userGender);
-                Navigator.pop(context);
+                    .sendUserInformations(userWeight, userGender)
+                    .then((value) => Navigator.pop(context));
               } else {
-                /// Affichage d'une erreur si toutes les informations ne sont pas remplies
+                // Affichage d'une erreur si toutes les informations ne sont pas remplies
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     backgroundColor: Colors.red,
                     content: Row(
@@ -74,8 +72,10 @@ class _InformationsState extends State<Informations> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Card(
+                shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
+                  height: mqSize.height / 5,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -97,62 +97,36 @@ class _InformationsState extends State<Informations> {
                 ),
               ),
               Card(
+                shape: cardRadius(),
                 elevation: cardElevation,
                 child: Container(
+                  height: mqSize.height / 5,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       cardPicture('images/weight.png', 4),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Slider(
-                              value: (userWeight != null)
-                                  ? userWeight.toDouble()
-                                  : 0.0,
-                              activeColor: Colors.green,
-                              min: 0.0,
-                              max: 150.0,
-                              divisions: 150,
-                              onChanged: ((double d) {
-                                setState(() => userWeight = d.round());
-                              })),
-                          infosResult((userWeight != null)
-                              ? userWeight.toString()
-                              : '0')
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                elevation: cardElevation,
-                child: Container(
-                  padding: cardPadding(),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      cardPicture('images/height.png', 4),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Slider(
-                              value: (userHeight != null)
-                                  ? userHeight.toDouble()
-                                  : 140.0,
-                              activeColor: Colors.green,
-                              min: 140.0,
-                              max: 210.0,
-                              divisions: 70,
-                              onChanged: ((double d) {
-                                setState(() => userHeight = d.round());
-                              })),
-                          infosResult((userHeight != null)
-                              ? userHeight.toString()
-                              : '140'),
-                        ],
+                      Container(
+                        width: mqSize.width / 1.75,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Slider(
+                                value: (userWeight != null)
+                                    ? userWeight.toDouble()
+                                    : 0.0,
+                                activeColor: Colors.green,
+                                min: 0.0,
+                                max: 150.0,
+                                divisions: 150,
+                                onChanged: ((double d) {
+                                  setState(() => userWeight = d.round());
+                                })),
+                            infosResult((userWeight != null)
+                                ? (userWeight.toString() + ' kg')
+                                : '0 kg')
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -163,6 +137,11 @@ class _InformationsState extends State<Informations> {
         ),
       ),
     );
+  }
+
+  /// Renvoie une card arrondie
+  RoundedRectangleBorder cardRadius() {
+    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0));
   }
 
   /// Affichage d'une image dans les bonnes dimensions pour l'écran

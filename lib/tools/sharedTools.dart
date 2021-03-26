@@ -2,17 +2,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedTools {
   /// Envoie des données dans les shared préférences pour la sauvegarde
-  void sendUserInformations(int userWeight, int userHeight, int gender) async {
-    await SharedPreferences.getInstance().then((prefs) {
+  Future sendUserInformations(int userWeight, int gender) async {
+    return await SharedPreferences.getInstance().then((prefs) {
       prefs.setInt('userWeight', userWeight);
-      prefs.setInt('userHeight', userHeight);
       prefs.setInt('userGender', gender);
     });
-  }
-
-  /// Renvoie le booléen pour savoir si l'utilisateur a déjà enregistré ses données
-  Future<bool> isAlreadyIn() async {
-    return await SharedPreferences.getInstance()
-        .then((pref) => pref.getBool('alreadyIn'));
   }
 }
