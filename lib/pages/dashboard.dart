@@ -36,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
     },
     {
       'image': 'images/warning.png',
-      'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un éthylotest.'
+      'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
     }
   ];
 
@@ -160,14 +160,18 @@ class _DashboardState extends State<Dashboard> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text("${currentTx.toStringAsFixed(2)} g/L",
+                      Text("${currentTx.toStringAsFixed(2)} g/L*",
                           style: TextStyle(fontSize: 80)),
                       Center(
-                        child: Text(
-                          formatRestToDecuve(),
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      )
+                        child: Column(children: [
+                          Text(formatRestToDecuve(),
+                              style: TextStyle(fontSize: 22)),
+                          Text(
+                            "*Taux indicatif, ne remplace pas un alcootest",
+                            style: TextStyle(fontSize: 15),
+                          )
+                        ]),
+                      ),
                     ],
                   ),
                 ),
