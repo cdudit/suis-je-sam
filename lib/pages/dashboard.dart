@@ -23,7 +23,8 @@ class _DashboardState extends State<Dashboard> {
   Timer timer;
   bool isEmptyStomach = false;
   int restToDecuve = 0;
-  List<dynamic> helps = [ // Liste des textes et images à mettre dans le centre d'aide
+  List<dynamic> helps = [
+    // Liste des textes et images à mettre dans le centre d'aide
     {
       'image': 'images/beer.png',
       'text': 'Une bière de 8°, vous choisissez la quantité ensuite.'
@@ -193,12 +194,10 @@ class _DashboardState extends State<Dashboard> {
       shape: roundedShape(),
       elevation: cardElevation,
       title: Text("Aide", style: TextStyle(fontSize: 35.0)),
-      content: Container(
-        height: mqSize.height / 2.75,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: helpList())
-      ),
+      content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: helpList()),
       actions: [
         TextButton(
             onPressed: (() => Navigator.pop(context)),
@@ -216,22 +215,15 @@ class _DashboardState extends State<Dashboard> {
     List<Widget> rows = [];
     helps.forEach((element) {
       rows.add(Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         elevation: 10.0,
         child: Container(
-          padding: EdgeInsets.all(5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(element['image'], width: mqSize.width / 8),
-              Container(
-                  padding: EdgeInsets.only(left: 5.0),
-                  width: mqSize.width / 2,
-                  child: Text(element['text'], style: TextStyle(fontSize: 18))
-              )
-            ],
-          ),
-        ),
+            padding: EdgeInsets.all(5.0),
+            child: ListTile(
+              title: Text(element['text'], style: TextStyle(fontSize: 18)),
+              leading: Image.asset(element['image'], width: mqSize.width / 10),
+            )),
       ));
     });
     return rows;
@@ -288,12 +280,12 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  /// Calcul pour savoir 
+  /// Calcul pour savoir
   void calculRestToDecuve() {
     setState(() {
       restToDecuve = 0;
       double calculTx = currentTx;
-      while(calculTx > 0.5) {
+      while (calculTx > 0.5) {
         calculTx -= (userGenderTx == 0.7) ? 0.025 : 0.02125;
         restToDecuve++;
       }
@@ -310,7 +302,7 @@ class _DashboardState extends State<Dashboard> {
     }
     int hour = 0;
     int min = 0;
-    for(int tmp = restToDecuve; tmp > 0; tmp--) {
+    for (int tmp = restToDecuve; tmp > 0; tmp--) {
       min += 15;
       if (min == 60) {
         hour++;
