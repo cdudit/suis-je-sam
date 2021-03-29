@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suis_je_sam/tools/sharedTools.dart';
@@ -8,10 +9,11 @@ class Informations extends StatefulWidget {
 }
 
 class _InformationsState extends State<Informations> {
-  double cardElevation = 10.0;
+  double cardElevation = 5.0;
   int userWeight;
   int userGender;
   Size mqSize;
+  bool isYoung;
 
   @override
   void initState() {
@@ -19,8 +21,9 @@ class _InformationsState extends State<Informations> {
     // Récupération des informations dans les shared préférences
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
-        userWeight = prefs.getInt('userWeight') ?? null;
-        userGender = prefs.getInt('userGender') ?? null;
+        userWeight = prefs.getInt('userWeight') ?? 1;
+        userGender = prefs.getInt('userGender') ?? 1;
+        isYoung = prefs.getBool('isYoung') ?? false;
       });
     });
   }
@@ -30,40 +33,7 @@ class _InformationsState extends State<Informations> {
     mqSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Vos informations"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (userGender != null && userWeight != null) {
-                SharedTools()
-                    .sendUserInformations(userWeight, userGender)
-                    .then((value) => Navigator.pop(context));
-              } else {
-                // Affichage d'une erreur si toutes les informations ne sont pas remplies
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Icon(
-                              Icons.warning,
-                              color: Colors.white,
-                              size: 25.0,
-                            ),
-                            padding: EdgeInsets.only(right: 10.0),
-                          ),
-                          Text(
-                            'Veuillez saisir toutes les informations',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15.0),
-                          )
-                        ])));
-              }
-            },
-            child: Text("Sauvegarder", style: TextStyle(color: Colors.blue)),
-          )
-        ],
+        title: Text("Vos informations")
       ),
       body: Center(
         child: Container(
@@ -71,6 +41,31 @@ class _InformationsState extends State<Informations> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Card(
+                shape: cardRadius(),
+                elevation: cardElevation,
+                child: MergeSemantics(
+                  child: ListTile(
+                    title: Text('Jeune conducteur',
+                        style: TextStyle(fontSize: 25.0)),
+                    trailing: CupertinoSwitch(
+                      value: isYoung,
+                      onChanged: (bool value) {
+                        setState(() {
+                          isYoung = value;
+                          sendToShared();
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      setState(() {
+                        isYoung = !isYoung;
+                        sendToShared();
+                      });
+                    },
+                  ),
+                ),
+              ),
               Card(
                 shape: cardRadius(),
                 elevation: cardElevation,
@@ -83,13 +78,19 @@ class _InformationsState extends State<Informations> {
                       InkWell(
                         child: cardPicture('images/man.png', 3, 0),
                         onTap: (() {
-                          setState(() => userGender = 0);
+                          setState(() {
+                            userGender = 0;
+                            sendToShared();
+                          });
                         }),
                       ),
                       InkWell(
                         child: cardPicture('images/woman.png', 3, 1),
                         onTap: (() {
-                          setState(() => userGender = 1);
+                          setState(() {
+                            userGender = 1;
+                            sendToShared();
+                          });
                         }),
                       )
                     ],
@@ -120,7 +121,10 @@ class _InformationsState extends State<Informations> {
                                 max: 150.0,
                                 divisions: 150,
                                 onChanged: ((double d) {
-                                  setState(() => userWeight = d.round());
+                                  setState(() {
+                                    userWeight = d.round();
+                                    sendToShared();
+                                  });
                                 })),
                             infosResult((userWeight != null)
                                 ? (userWeight.toString() + ' kg')
@@ -139,6 +143,10 @@ class _InformationsState extends State<Informations> {
     );
   }
 
+  void sendToShared() {
+    SharedTools().sendUserInformations(userWeight, userGender, isYoung);
+  }
+
   /// Renvoie une card arrondie
   RoundedRectangleBorder cardRadius() {
     return RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0));
@@ -147,7 +155,7 @@ class _InformationsState extends State<Informations> {
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
   Card cardPicture(String path, int divider, myUserGender) {
     return Card(
-      elevation: (userGender == myUserGender) ? 20.0 : 0.0,
+      elevation: (userGender == myUserGender) ? cardElevation : 0.0,
       child: Container(
         padding: EdgeInsets.all(5.0),
         child: Image.asset(path,

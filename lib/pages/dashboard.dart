@@ -14,9 +14,10 @@ class _DashboardState extends State<Dashboard> {
   double currentTx = 0.0;
   double rawTx = 0.0;
   int drinked = 0;
+  bool isYoung;
   int userWeight;
   double userGenderTx;
-  double cardElevation = 10.0;
+  double cardElevation = 5.0;
   Size mqSize;
   int startDate;
   int currentDate;
@@ -182,9 +183,10 @@ class _DashboardState extends State<Dashboard> {
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: "helpBtn",
-        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
         onPressed: helpDialog,
-        child: Icon(Icons.help, size: 55, color: Colors.white),
+        child: Icon(Icons.help_outline, size: 55),
       ),
     );
   }
@@ -289,7 +291,7 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       restToDecuve = 0;
       double calculTx = currentTx;
-      while (calculTx > 0.5) {
+      while (calculTx > (isYoung ? 0.2 : 0.5)) {
         calculTx -= (userGenderTx == 0.7) ? 0.025 : 0.02125;
         restToDecuve++;
       }
@@ -301,7 +303,7 @@ class _DashboardState extends State<Dashboard> {
     if (currentTx == 0) {
       return 'Ajoutez un verre pour commencer';
     }
-    if (currentTx <= 0.5) {
+    if (currentTx <= (isYoung ? 0.2 : 0.5)) {
       return 'Vous êtes en dessous de la limite';
     }
     int hour = 0;
@@ -360,13 +362,14 @@ class _DashboardState extends State<Dashboard> {
       setState(() {
         userWeight = prefs.getInt('userWeight');
         userGenderTx = (prefs.getInt('userGender') == 0) ? 0.7 : 0.6;
+        isYoung = prefs.getBool('isYoung');
       });
     });
   }
 
   /// Style des button text dans le dialog
   Text dialogStyle(String title) {
-    return Text(title, style: TextStyle(fontSize: 35, color: Colors.white));
+    return Text(title, style: TextStyle(fontSize: 35, color: Colors.blue));
   }
 
   /// Remise à zéro
