@@ -450,19 +450,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void helpDialog() {
-    /*AlertDialog alert = AlertDialog(
-      elevation: cardElevation,
-      title: Text("Aide", style: TextStyle(fontSize: 35.0)),
-      content: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: helpList()),
-      actions: [
-        TextButton(
-            onPressed: (() => Navigator.pop(context)),
-            child: Text("OK", style: TextStyle(fontSize: 20)))
-      ],
-    );*/
     showDialog(
       context: context,
       builder: ((BuildContext context) {
@@ -508,17 +495,18 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> helpList() {
     List<Widget> rows = [];
     helps.forEach((element) {
-      rows.add(Card(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        elevation: 10.0,
-        child: Container(
-            padding: EdgeInsets.all(5.0),
-            child: ListTile(
-              title: Text(element['text'], style: TextStyle(fontSize: 18)),
-              leading: Image.asset(element['image'], width: mqSize.width / 10),
-            )),
-      ));
+      rows.add(Container(
+        margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+        child: ClayContainer(
+          color: baseColor,
+          borderRadius: clayRadius,
+          child: Container(
+              margin: EdgeInsets.all(5.0),
+              child: ListTile(
+                title: Text(element['text'], style: TextStyle(fontSize: 18)),
+                leading: Image.asset(element['image'], width: mqSize.width / 10),
+              )),
+        )));
     });
     return rows;
   }
