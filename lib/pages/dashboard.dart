@@ -25,10 +25,10 @@ class _DashboardState extends State<Dashboard> {
   bool isEmptyStomach = false;
   int restToDecuve = 0;
 
-  double beerDegree = 0.06;
+  double beerDegree = globals.beerDegree;
   int beerMl = 250;
-  double wineDegree = 0.13;
-  int wineMl = 140;
+  double wineDegree = globals.wineDegree;
+  int wineMl = globals.wineMl;
 
   List<Drink> beers = [];
   List<Drink> wines = [];
@@ -68,7 +68,7 @@ class _DashboardState extends State<Dashboard> {
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
-                  child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35)),
+                  child: Center(child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35))),
                   margin: EdgeInsets.only(bottom: 2.0),
               ),
               ListTile(

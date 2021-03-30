@@ -1,5 +1,6 @@
 import 'package:clay_containers/widgets/clay_container.dart';
 import 'package:flutter/material.dart';
+import 'package:suis_je_sam/tools/globals.dart' as globals;
 
 class Help extends StatefulWidget {
   @override
@@ -8,9 +9,9 @@ class Help extends StatefulWidget {
 
 class _HelpState extends State<Help> {
   List<dynamic> helps = [];
-  double beerDegree = 0.06;
-  double wineDegree = 0.13;
-  int wineMl = 140;
+  double beerDegree = globals.beerDegree;
+  double wineDegree = globals.wineDegree;
+  int wineMl = globals.wineMl;
   Size mqSize;
   double clayRadius = 20.0;
   Color baseColor = Color(0xFF292D32);
