@@ -39,24 +39,9 @@ class _DashboardState extends State<Dashboard> {
   Size mqSize;
   double iconSize = 35.0;
 
+  List<dynamic> helps = [];
   Timer timer;
 
-  // Liste des textes et images à mettre dans le centre d'aide
-  List<dynamic> helps = [
-    {
-      'image': 'images/beer.png',
-      'text': 'Une bière de 8°, vous choisissez la quantité ensuite.'
-    },
-    {'image': 'images/wine.png', 'text': 'Un verre de vin de 14cL à 12°.'},
-    {
-      'image': 'images/eating.png',
-      'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
-    },
-    {
-      'image': 'images/warning.png',
-      'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
-    }
-  ];
 
   // Lors de l'initialisation
   @override
@@ -65,6 +50,23 @@ class _DashboardState extends State<Dashboard> {
     // Récupération des informations dans les shared préférences
     getShared();
     timer = Timer.periodic(Duration(seconds: 60), (Timer t) => decrementTaux());
+
+    // Liste des textes et images à mettre dans le centre d'aide
+    helps = [
+      {
+        'image': 'images/beer.png',
+        'text': 'Une bière de ${(beerDegree * 100).round()}°, vous choisissez la quantité ensuite.'
+      },
+      {'image': 'images/wine.png', 'text': 'Un verre de vin de ${(wineMl / 10).round()}cL à ${(wineDegree * 100).round()}°.'},
+      {
+        'image': 'images/eating.png',
+        'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
+      },
+      {
+        'image': 'images/warning.png',
+        'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
+      }
+    ];
   }
 
   // Lors d'une mise en arrière plan
@@ -448,7 +450,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void helpDialog() {
-    AlertDialog alert = AlertDialog(
+    /*AlertDialog alert = AlertDialog(
       elevation: cardElevation,
       title: Text("Aide", style: TextStyle(fontSize: 35.0)),
       content: Column(
@@ -460,10 +462,45 @@ class _DashboardState extends State<Dashboard> {
             onPressed: (() => Navigator.pop(context)),
             child: Text("OK", style: TextStyle(fontSize: 20)))
       ],
-    );
+    );*/
     showDialog(
       context: context,
-      builder: ((BuildContext context) => alert),
+      builder: ((BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0)),
+          child: ClayContainer(
+            spread: 0,
+            curveType: CurveType.convex,
+            borderRadius: clayRadius,
+            color: baseColor,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(top: 25.0, bottom: 10.0),
+                  child: Text("Aide", style: TextStyle(fontSize: 30)),
+                ),
+                Container(
+                  padding: EdgeInsets.all(15.0),
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: helpList()),
+                ),
+                Container(
+                  padding: EdgeInsets.only(bottom: 10.0),
+                  child: TextButton(
+                    onPressed: (() => Navigator.pop(context)),
+                    child: Text("OK", style: TextStyle(fontSize: 20)),
+                  ),
+                )
+              ],
+            ),
+          )
+        );
+      }),
     );
   }
 
