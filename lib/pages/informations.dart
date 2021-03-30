@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suis_je_sam/tools/sharedTools.dart';
+import 'package:suis_je_sam/tools/globals.dart' as globals;
 
 class Informations extends StatefulWidget {
   @override
@@ -16,8 +17,8 @@ class _InformationsState extends State<Informations> {
   bool isYoung;
 
   // Variables pour le design
-  double clayRadius = 20.0;
-  Color baseColor = Color(0xFF292D32);
+  double clayRadius = globals.clayRadius;
+  Color baseColor = globals.baseColor;
   Size mqSize;
 
   @override
@@ -59,7 +60,7 @@ class _InformationsState extends State<Informations> {
                       curveType: CurveType.convex,
                       child: CupertinoSwitch(
                         activeColor: Colors.lightBlue,
-                        value: isYoung,
+                        value: isYoung ?? false,
                         onChanged: (bool value) {
                           setState(() {
                             isYoung = value;

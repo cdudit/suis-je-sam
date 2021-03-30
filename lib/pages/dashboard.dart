@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suis_je_sam/model/drink.dart';
+import 'package:suis_je_sam/tools/globals.dart' as globals;
 
 class Dashboard extends StatefulWidget {
   @override
@@ -33,13 +34,11 @@ class _DashboardState extends State<Dashboard> {
   List<Drink> wines = [];
 
   // Variables pour le design
-  double clayRadius = 20.0;
-  double cardElevation = 5.0;
-  Color baseColor = Color(0xFF292D32);
+  double clayRadius = globals.clayRadius;
+  Color baseColor = globals.baseColor;
   Size mqSize;
   double iconSize = 35.0;
 
-  List<dynamic> helps = [];
   Timer timer;
 
   // Lors de l'initialisation
@@ -49,23 +48,6 @@ class _DashboardState extends State<Dashboard> {
     // Récupération des informations dans les shared préférences
     getShared();
     timer = Timer.periodic(Duration(seconds: 60), (Timer t) => decrementTaux());
-
-    // Liste des textes et images à mettre dans le centre d'aide
-    helps = [
-      {
-        'image': 'images/beer.png',
-        'text': 'Une bière de ${(beerDegree * 100).round()}°, vous choisissez la quantité ensuite.'
-      },
-      {'image': 'images/wine.png', 'text': 'Un verre de vin de ${(wineMl / 10).round()}cL à ${(wineDegree * 100).round()}°.'},
-      {
-        'image': 'images/eating.png',
-        'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
-      },
-      {
-        'image': 'images/warning.png',
-        'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
-      }
-    ];
   }
 
   // Lors d'une mise en arrière plan
@@ -101,6 +83,10 @@ class _DashboardState extends State<Dashboard> {
               ListTile(
                 title: Text("Aide", style: TextStyle(fontSize: 20)),
                 leading: Icon(Icons.help, size: 30),
+                onTap: (() {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/help');
+                }),
               )
             ],
           )
@@ -113,14 +99,6 @@ class _DashboardState extends State<Dashboard> {
               onPressed: (() => refresh()),
               icon: Icon(Icons.refresh, color: Colors.white),
               iconSize: 30),
-          IconButton(
-              onPressed: (() {
-                Navigator.pushNamed(context, '/informations')
-                    .then((_) => getShared());
-              }),
-              icon: Icon(Icons.account_circle, color: Colors.white),
-              iconSize: 30),
-          IconButton(onPressed: helpDialog, icon: Icon(Icons.help_outline), iconSize: 30)
         ],
       ),
       body: Center(
@@ -434,7 +412,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  /// Calcul pour savoir
+  /// Calcul pour savoir combien de temps il reste avant de descendre sous la limite
   void calculRestToDecuve() {
     setState(() {
       restToDecuve = 0;
@@ -447,6 +425,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  /// Retourne le texte signifiant dans combien de temps l'utilisateur peut conduire
   String formatRestToDecuve() {
     if (currentTx == 0) {
       return 'Ajoutez un verre pour commencer';
@@ -466,74 +445,13 @@ class _DashboardState extends State<Dashboard> {
     return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
 
+  /// Les arrondis pour les mL des bières
   ButtonStyle beersMlShape() {
     return ButtonStyle(
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(15.0),
     )));
-  }
-
-  void helpDialog() {
-    showDialog(
-      context: context,
-      builder: ((BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0)),
-          child: ClayContainer(
-            spread: 0,
-            curveType: CurveType.convex,
-            borderRadius: clayRadius,
-            color: baseColor,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  padding: EdgeInsets.only(top: 25.0, bottom: 10.0),
-                  child: Text("Aide", style: TextStyle(fontSize: 30)),
-                ),
-                Container(
-                  padding: EdgeInsets.all(15.0),
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: helpList()),
-                ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 10.0),
-                  child: TextButton(
-                    onPressed: (() => Navigator.pop(context)),
-                    child: Text("OK", style: TextStyle(fontSize: 20)),
-                  ),
-                )
-              ],
-            ),
-          )
-        );
-      }),
-    );
-  }
-
-  /// Retourne la liste de widgets à mettre dans le centre d'aide
-  List<Widget> helpList() {
-    List<Widget> rows = [];
-    helps.forEach((element) {
-      rows.add(Container(
-        margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-        child: ClayContainer(
-          color: baseColor,
-          borderRadius: clayRadius,
-          child: Container(
-              margin: EdgeInsets.all(5.0),
-              child: ListTile(
-                title: Text(element['text'], style: TextStyle(fontSize: 18)),
-                leading: Image.asset(element['image'], width: mqSize.width / 10),
-              )),
-        )));
-    });
-    return rows;
   }
 
   /// Initialisation des sharedPreferences
