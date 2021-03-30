@@ -113,7 +113,7 @@ class _DashboardState extends State<Dashboard> {
                 child: MergeSemantics(
                   child: ListTile(
                     title: Text('Je suis à jeun',
-                        style: TextStyle(fontSize: 25.0)),
+                        style: TextStyle(fontSize: 23.0)),
                     trailing: ClayContainer(
                       curveType: CurveType.convex,
                       borderRadius: 75,
@@ -199,7 +199,7 @@ class _DashboardState extends State<Dashboard> {
                                       style: beersMlShape(),
                                       onPressed: (() =>
                                           setState(() => beerMl = 250)),
-                                      child: Text("25")),
+                                      child: Text("25", style: TextStyle(fontSize: 20))),
                                 ),
                                 Container(
                                   padding:
@@ -215,7 +215,7 @@ class _DashboardState extends State<Dashboard> {
                                         style: beersMlShape(),
                                         onPressed: (() =>
                                             setState(() => beerMl = 330)),
-                                        child: Text("33")),
+                                        child: Text("33", style: TextStyle(fontSize: 20))),
                                   ),
                                 ),
                                 ClayContainer(
@@ -229,7 +229,7 @@ class _DashboardState extends State<Dashboard> {
                                       style: beersMlShape(),
                                       onPressed: (() =>
                                           setState(() => beerMl = 500)),
-                                      child: Text("50")),
+                                      child: Text("50", style: TextStyle(fontSize: 20))),
                                 )
                               ],
                             ))
@@ -292,7 +292,7 @@ class _DashboardState extends State<Dashboard> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text("${currentTx.toStringAsFixed(2)} g/L*",
-                          style: TextStyle(fontSize: 80)),
+                          style: TextStyle(fontSize: 70)),
                       Center(
                         child: Column(children: [
                           Text(formatRestToDecuve(),
