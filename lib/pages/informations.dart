@@ -1,3 +1,4 @@
+import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,11 +10,15 @@ class Informations extends StatefulWidget {
 }
 
 class _InformationsState extends State<Informations> {
-  double cardElevation = 5.0;
+  // Informations utilisateur
   int userWeight;
   int userGender;
-  Size mqSize;
   bool isYoung;
+
+  // Variables pour le design
+  double clayRadius = 20.0;
+  Color baseColor = Color(0xFF292D32);
+  Size mqSize;
 
   @override
   void initState() {
@@ -41,21 +46,27 @@ class _InformationsState extends State<Informations> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Card(
-                shape: cardRadius(),
-                elevation: cardElevation,
+              ClayContainer(
+                color: baseColor,
+                borderRadius: clayRadius,
                 child: MergeSemantics(
                   child: ListTile(
                     title: Text('Jeune conducteur',
                         style: TextStyle(fontSize: 25.0)),
-                    trailing: CupertinoSwitch(
-                      value: isYoung,
-                      onChanged: (bool value) {
-                        setState(() {
-                          isYoung = value;
-                          sendToShared();
-                        });
-                      },
+                    trailing: ClayContainer(
+                      color: baseColor,
+                      borderRadius: 50,
+                      curveType: CurveType.convex,
+                      child: CupertinoSwitch(
+                        activeColor: Colors.lightBlue,
+                        value: isYoung,
+                        onChanged: (bool value) {
+                          setState(() {
+                            isYoung = value;
+                            sendToShared();
+                          });
+                        },
+                      ),
                     ),
                     onTap: () {
                       setState(() {
@@ -66,9 +77,9 @@ class _InformationsState extends State<Informations> {
                   ),
                 ),
               ),
-              Card(
-                shape: cardRadius(),
-                elevation: cardElevation,
+              ClayContainer(
+                color: baseColor,
+                borderRadius: clayRadius,
                 child: Container(
                   height: mqSize.height / 5,
                   padding: cardPadding(),
@@ -97,35 +108,42 @@ class _InformationsState extends State<Informations> {
                   ),
                 ),
               ),
-              Card(
-                shape: cardRadius(),
-                elevation: cardElevation,
+              ClayContainer(
+                color: baseColor,
+                borderRadius: clayRadius,
                 child: Container(
                   height: mqSize.height / 5,
                   padding: cardPadding(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      cardPicture('images/weight.png', 4, false),
+                      Image.asset("images/weight.png", width: mqSize.width / 4),
                       Container(
                         width: mqSize.width / 1.75,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Slider(
-                                value: (userWeight != null)
-                                    ? userWeight.toDouble()
-                                    : 1.0,
-                                activeColor: Colors.green,
-                                min: 1.0,
-                                max: 150.0,
-                                divisions: 150,
-                                onChanged: ((double d) {
-                                  setState(() {
-                                    userWeight = d.round();
-                                    sendToShared();
-                                  });
-                                })),
+                            Container(
+                              padding: EdgeInsets.only(bottom: 15.0),
+                              child: ClayContainer(
+                                color: baseColor,
+                                borderRadius: clayRadius,
+                                child: CupertinoSlider(
+                                    value: (userWeight != null)
+                                        ? userWeight.toDouble()
+                                        : 1.0,
+                                    activeColor: Colors.lightBlue,
+                                    min: 1.0,
+                                    max: 150.0,
+                                    divisions: 150,
+                                    onChanged: ((double d) {
+                                      setState(() {
+                                        userWeight = d.round();
+                                        sendToShared();
+                                      });
+                                    })),
+                              ),
+                            ),
                             infosResult((userWeight != null)
                                 ? (userWeight.toString() + ' kg')
                                 : '0 kg')
@@ -153,9 +171,12 @@ class _InformationsState extends State<Informations> {
   }
 
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
-  Card cardPicture(String path, int divider, myUserGender) {
-    return Card(
-      elevation: (userGender == myUserGender) ? cardElevation : 0.0,
+  ClayContainer cardPicture(String path, int divider, myUserGender) {
+    return ClayContainer(
+      color: baseColor,
+      borderRadius: 75,
+      emboss: (userGender == myUserGender),
+      curveType: (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
       child: Container(
         padding: EdgeInsets.all(5.0),
         child: Image.asset(path,

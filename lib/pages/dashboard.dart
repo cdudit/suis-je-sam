@@ -80,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tableau de bord", style: TextStyle(fontSize: 30.0)),
+        title: Text("Tableau de bord"),
         actions: [
           IconButton(
               onPressed: (() => refresh()),
