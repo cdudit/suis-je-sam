@@ -4,3 +4,7 @@ class Drink {
 
   Drink({this.degree, this.ml});
 }
+
+enum DrinkTitle {
+  beer, wine
+}

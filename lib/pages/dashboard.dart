@@ -157,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
                                 curveType: CurveType.concave,
                                 borderRadius: 75.0,
                                 child: IconButton(
-                                  onPressed: removeBeer,
+                                  onPressed: (() => removeDrink(DrinkTitle.beer)),
                                   icon: Icon(Icons.arrow_drop_down),
                                   iconSize: iconSize,
                                 )),
@@ -169,7 +169,7 @@ class _DashboardState extends State<Dashboard> {
                                 curveType: CurveType.convex,
                                 borderRadius: 75.0,
                                 child: IconButton(
-                                    onPressed: addBeer,
+                                    onPressed: (() => addDrink(DrinkTitle.beer)),
                                     icon: Icon(Icons.arrow_drop_up),
                                     iconSize: iconSize)),
                           ],
@@ -229,7 +229,7 @@ class _DashboardState extends State<Dashboard> {
                               curveType: CurveType.concave,
                               borderRadius: 75.0,
                               child: IconButton(
-                                onPressed: removeWine,
+                                onPressed: (() => removeDrink(DrinkTitle.wine)),
                                 icon: Icon(Icons.arrow_drop_down),
                                 iconSize: iconSize,
                               )),
@@ -241,7 +241,7 @@ class _DashboardState extends State<Dashboard> {
                               curveType: CurveType.convex,
                               borderRadius: 75.0,
                               child: IconButton(
-                                onPressed: addWine,
+                                onPressed: (() => addDrink(DrinkTitle.wine)),
                                 icon: Icon(Icons.arrow_drop_up),
                                 iconSize: iconSize,
                               )),
@@ -289,27 +289,33 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void removeBeer() {
-    if (beers.isNotEmpty) {
-      setState(() => beers.removeAt(0));
-      calculTaux();
+  void addDrink(DrinkTitle alcool) {
+    switch (alcool) {
+      case DrinkTitle.beer:
+        setState(() => beers.add(new Drink(degree: beerDegree, ml: beerMl)));
+        break;
+      case DrinkTitle.wine:
+        setState(() => wines.add(new Drink(degree: wineDegree, ml: wineMl)));
+        break;
     }
-  }
-
-  void addBeer() {
-    setState(() => beers.add(new Drink(degree: beerDegree, ml: beerMl)));
     calculTaux();
   }
 
-  void removeWine() {
-    if (wines.isNotEmpty) {
-      setState(() => wines.removeAt(0));
-      calculTaux();
+  void removeDrink(DrinkTitle alcool) {
+    switch (alcool) {
+      case DrinkTitle.beer:
+        if (beers.isNotEmpty) {
+          setState(() => beers.removeAt(0));
+          calculTaux();
+        }
+        break;
+      case DrinkTitle.wine:
+        if (wines.isNotEmpty) {
+          setState(() => wines.removeAt(0));
+          calculTaux();
+        }
+        break;
     }
-  }
-
-  void addWine() {
-    setState(() => wines.add(new Drink(degree: wineDegree, ml: wineMl)));
     calculTaux();
   }
 
