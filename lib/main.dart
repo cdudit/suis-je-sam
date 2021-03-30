@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       },
       debugShowCheckedModeBanner: false,
       title: 'Suis-je Sam ?',
-      theme: ThemeData(primarySwatch: Colors.deepPurple, brightness: Brightness.light),
+      theme: ThemeData(primarySwatch: Colors.lightBlue, brightness: Brightness.dark),
       home: Dashboard()
     );
   }
