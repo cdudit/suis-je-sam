@@ -4,6 +4,7 @@ import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:suis_je_sam/model/drink.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -23,7 +24,16 @@ class _DashboardState extends State<Dashboard> {
   bool isEmptyStomach = false;
   int restToDecuve = 0;
 
+  double beerDegree = 0.06;
+  int beerMl = 250;
+  double wineDegree = 0.13;
+  int wineMl = 140;
+
+  List<Drink> beers = [];
+  List<Drink> wines = [];
+
   // Variables pour le design
+  Color myPrimary = Colors.deepPurple;
   double clayRadius = 20.0;
   double cardElevation = 5.0;
   Color baseColor = Color(0xFFF2F2F2);
@@ -78,12 +88,12 @@ class _DashboardState extends State<Dashboard> {
               icon: Icon(Icons.refresh, color: Colors.white),
               iconSize: 30),
           IconButton(
-                onPressed: (() {
-                  Navigator.pushNamed(context, '/informations')
-                      .then((_) => getShared());
-                }),
-                icon: Icon(Icons.account_circle, color: Colors.white),
-                iconSize: 30),
+              onPressed: (() {
+                Navigator.pushNamed(context, '/informations')
+                    .then((_) => getShared());
+              }),
+              icon: Icon(Icons.account_circle, color: Colors.white),
+              iconSize: 30),
         ],
       ),
       body: Center(
@@ -105,6 +115,7 @@ class _DashboardState extends State<Dashboard> {
                       color: baseColor,
                       child: CupertinoSwitch(
                         value: isEmptyStomach,
+                        activeColor: myPrimary,
                         onChanged: (bool value) {
                           setState(() {
                             isEmptyStomach = value;
@@ -129,38 +140,69 @@ class _DashboardState extends State<Dashboard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell(
-                        onTap: (() => displayDialog()),
-                        child: Container(
-                          padding: EdgeInsets.only(top: 20.0),
-                          child: Container(
-                              height: mqSize.height / 6,
-                              width: mqSize.width / 3,
-                              child: Image.asset('images/beer.png')),
-                        )),
-                    Row(
+                    Container(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      child: Container(
+                          height: mqSize.height / 6,
+                          width: mqSize.width / 3,
+                          child: Image.asset('images/beer.png')),
+                    ),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ClayContainer(
-                            curveType: CurveType.concave,
-                            borderRadius: 75.0,
-                            child: IconButton(
-                                onPressed: null,
-                                icon: Icon(Icons.arrow_drop_down),
-                              iconSize: iconSize,
-                            )),
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text("10", style: TextStyle(fontSize: 30.0)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ClayContainer(
+                                curveType: CurveType.concave,
+                                borderRadius: 75.0,
+                                child: IconButton(
+                                  onPressed: removeBeer,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: iconSize,
+                                )),
+                            Container(
+                              padding: EdgeInsets.all(10.0),
+                              child: Text("${beers.length}", style: TextStyle(fontSize: 30.0)),
+                            ),
+                            ClayContainer(
+                                curveType: CurveType.convex,
+                                borderRadius: 75.0,
+                                child: IconButton(
+                                    onPressed: addBeer,
+                                    icon: Icon(Icons.arrow_drop_up),
+                                    iconSize: iconSize)),
+                          ],
                         ),
-                        ClayContainer(
-                            curveType: CurveType.convex,
-                            borderRadius: 75.0,
-                            child: IconButton(
-                                onPressed: null,
-                                icon: Icon(Icons.arrow_drop_up),
-                                iconSize: iconSize
-                            )),
+                        Container(
+                          padding: EdgeInsets.only(top: 20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ClayContainer(
+                                curveType: CurveType.convex,
+                                borderRadius: 50.0,
+                                color: baseColor,
+                                child: TextButton(onPressed: null, child: Text("25cL")),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                                child: ClayContainer(
+                                  curveType: CurveType.concave,
+                                  borderRadius: 50.0,
+                                  color: baseColor,
+                                  child: TextButton(onPressed: null, child: Text("33cL")),
+                                ),
+                              ),
+                              ClayContainer(
+                                curveType: CurveType.convex,
+                                borderRadius: 50.0,
+                                color: baseColor,
+                                child: TextButton(onPressed: null, child: Text("50cL")),
+                              )
+                            ],
+                          )
+                        )
                       ],
                     )
                   ],
@@ -173,15 +215,13 @@ class _DashboardState extends State<Dashboard> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      InkWell(
-                          onTap: (() => incrementTaux(140, 0.12)),
-                          child: Container(
-                            padding: EdgeInsets.only(top: 20.0),
-                            child: Container(
-                                height: mqSize.height / 6,
-                                width: mqSize.width / 3,
-                                child: Image.asset('images/wine.png')),
-                          )),
+                      Container(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                        child: Container(
+                            height: mqSize.height / 6,
+                            width: mqSize.width / 3,
+                            child: Image.asset('images/wine.png')),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -189,23 +229,22 @@ class _DashboardState extends State<Dashboard> {
                               curveType: CurveType.concave,
                               borderRadius: 75.0,
                               child: IconButton(
-                                onPressed: null,
+                                onPressed: removeWine,
                                 icon: Icon(Icons.arrow_drop_down),
                                 iconSize: iconSize,
                               )),
                           Container(
                             padding: EdgeInsets.all(10.0),
-                            child: Text("10", style: TextStyle(fontSize: 30.0)),
+                            child: Text("${wines.length}", style: TextStyle(fontSize: 30.0)),
                           ),
                           ClayContainer(
                               curveType: CurveType.convex,
                               borderRadius: 75.0,
                               child: IconButton(
-                                  onPressed: null,
-                                  icon: Icon(Icons.arrow_drop_up),
+                                onPressed: addWine,
+                                icon: Icon(Icons.arrow_drop_up),
                                 iconSize: iconSize,
-                              )
-                          ),
+                              )),
                         ],
                       )
                     ],
@@ -220,7 +259,8 @@ class _DashboardState extends State<Dashboard> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text("${currentTx.toStringAsFixed(2)} g/L*",
-                          style: TextStyle(fontSize: 80, color: Colors.deepPurple)),
+                          style: TextStyle(
+                              fontSize: 80, color: myPrimary)),
                       Center(
                         child: Column(children: [
                           Text(formatRestToDecuve(),
@@ -249,67 +289,53 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  RoundedRectangleBorder roundedShape() {
-    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0));
+  void removeBeer() {
+    if (beers.isNotEmpty) {
+      setState(() => beers.removeAt(0));
+      calculTaux();
+    }
   }
 
-  void helpDialog() {
-    AlertDialog alert = AlertDialog(
-      shape: roundedShape(),
-      elevation: cardElevation,
-      title: Text("Aide", style: TextStyle(fontSize: 35.0)),
-      content: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: helpList()),
-      actions: [
-        TextButton(
-            onPressed: (() => Navigator.pop(context)),
-            child: Text("OK", style: TextStyle(fontSize: 20)))
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: ((BuildContext context) => alert),
-    );
+  void addBeer() {
+    setState(() => beers.add(new Drink(degree: beerDegree, ml: beerMl)));
+    calculTaux();
   }
 
-  /// Retourne la liste de widgets à mettre dans le centre d'aide
-  List<Widget> helpList() {
-    List<Widget> rows = [];
-    helps.forEach((element) {
-      rows.add(Card(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        elevation: 10.0,
-        child: Container(
-            padding: EdgeInsets.all(5.0),
-            child: ListTile(
-              title: Text(element['text'], style: TextStyle(fontSize: 18)),
-              leading: Image.asset(element['image'], width: mqSize.width / 10),
-            )),
-      ));
-    });
-    return rows;
+  void removeWine() {
+    if (wines.isNotEmpty) {
+      setState(() => wines.removeAt(0));
+      calculTaux();
+    }
+  }
+
+  void addWine() {
+    setState(() => wines.add(new Drink(degree: wineDegree, ml: wineMl)));
+    calculTaux();
   }
 
   /// Augmentation du taux d'alcoolémie
-  void incrementTaux(int mL, double degree) {
+  void calculTaux() {
     setState(() {
-      if (drinked == 0) {
-        // Récupération du timestamp du premier verre bu
+      rawTx = 0;
+      if ((wines.length + beers.length) == 1) {
         startDate =
             (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
       }
       currentDate =
           (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
 
-      // Incrémentation du nombre de verres bu
-      drinked++;
+      if (beers.isNotEmpty) {
+        beers.forEach((element) {
+          rawTx += (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+        });
+      }
 
-      // Calcul du taux
-      // ((mL * degrés * densité de l'alcool) / (poids * taux)) - (txElimination * (nbQuartHeureMtn-nbQuartHeurePremierVerre))
-      rawTx += (mL * degree * 0.8) / (userWeight * userGenderTx);
+      if (wines.isNotEmpty) {
+        wines.forEach((element) {
+          rawTx += (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+        });
+      }
+
       currentTx = rawTx;
       decrementTaux();
     });
@@ -317,7 +343,7 @@ class _DashboardState extends State<Dashboard> {
 
   /// Calcul du taux toutes les minutes
   void decrementTaux() {
-    if (drinked > 0 && rawTx > 0) {
+    if ((wines.isNotEmpty || beers.isNotEmpty) && rawTx > 0) {
       setState(() {
         // Récupération du nombre de quarts d'heures en timestamp
         currentDate =
@@ -376,42 +402,43 @@ class _DashboardState extends State<Dashboard> {
     return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
 
-  /// Affichage du dialog pour choisir la quantité
-  void displayDialog() {
-    // Création du dialog
+  void helpDialog() {
     AlertDialog alert = AlertDialog(
-        elevation: cardElevation,
-        shape: roundedShape(),
-        content: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                  onPressed: (() {
-                    incrementTaux(250, 0.08);
-                    Navigator.pop(context);
-                  }),
-                  child: dialogStyle("25cl")),
-              TextButton(
-                  onPressed: (() {
-                    incrementTaux(330, 0.08);
-                    Navigator.pop(context);
-                  }),
-                  child: dialogStyle("33cL")),
-              TextButton(
-                  onPressed: (() {
-                    incrementTaux(500, 0.08);
-                    Navigator.pop(context);
-                  }),
-                  child: dialogStyle("50cL"))
-            ],
-          ),
-        ));
-    // Affichage du dialog
+      elevation: cardElevation,
+      title: Text("Aide", style: TextStyle(fontSize: 35.0)),
+      content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: helpList()),
+      actions: [
+        TextButton(
+            onPressed: (() => Navigator.pop(context)),
+            child: Text("OK", style: TextStyle(fontSize: 20)))
+      ],
+    );
     showDialog(
       context: context,
       builder: ((BuildContext context) => alert),
     );
+  }
+
+  /// Retourne la liste de widgets à mettre dans le centre d'aide
+  List<Widget> helpList() {
+    List<Widget> rows = [];
+    helps.forEach((element) {
+      rows.add(Card(
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        elevation: 10.0,
+        child: Container(
+            padding: EdgeInsets.all(5.0),
+            child: ListTile(
+              title: Text(element['text'], style: TextStyle(fontSize: 18)),
+              leading: Image.asset(element['image'], width: mqSize.width / 10),
+            )),
+      ));
+    });
+    return rows;
   }
 
   /// Initialisation des sharedPreferences
@@ -436,7 +463,8 @@ class _DashboardState extends State<Dashboard> {
       currentTx = 0.0;
       rawTx = 0.0;
       restToDecuve = 0;
-      drinked = 0;
+      beers.clear();
+      wines.clear();
     });
   }
 }
