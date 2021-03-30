@@ -42,7 +42,6 @@ class _DashboardState extends State<Dashboard> {
   List<dynamic> helps = [];
   Timer timer;
 
-
   // Lors de l'initialisation
   @override
   void initState() {
@@ -81,6 +80,32 @@ class _DashboardState extends State<Dashboard> {
     mqSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                  child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35)),
+                  margin: EdgeInsets.only(bottom: 2.0),
+              ),
+              ListTile(
+                title: Text("Mes informations", style: TextStyle(fontSize: 20)),
+                leading: Icon(Icons.account_circle, size: 30),
+                onTap: (() {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/informations')
+                      .then((_) => getShared());
+                }),
+              ),
+              ListTile(
+                title: Text("Aide", style: TextStyle(fontSize: 20)),
+                leading: Icon(Icons.help, size: 30),
+              )
+            ],
+          )
+        ),
+      ),
       appBar: AppBar(
         title: Text("Tableau de bord"),
         actions: [
