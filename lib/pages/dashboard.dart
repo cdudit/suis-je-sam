@@ -93,6 +93,7 @@ class _DashboardState extends State<Dashboard> {
               }),
               icon: Icon(Icons.account_circle, color: Colors.white),
               iconSize: 30),
+          IconButton(onPressed: helpDialog, icon: Icon(Icons.help_outline), iconSize: 30)
         ],
       ),
       body: Center(
@@ -304,13 +305,6 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "helpBtn",
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        onPressed: helpDialog,
-        child: Icon(Icons.help_outline, size: 55),
       ),
     );
   }
