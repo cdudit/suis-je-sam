@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suis_je_sam/pages/dashboard.dart';
+import 'package:suis_je_sam/pages/help.dart';
 import 'package:suis_je_sam/pages/informations.dart';
 
 void main() {
@@ -14,14 +15,12 @@ class MyApp extends StatelessWidget {
       routes: {
         '/informations': (context) => Informations(),
         '/dashboard': (context) => Dashboard(),
+        '/help': (context) => Help()
       },
       debugShowCheckedModeBanner: false,
       title: 'Suis-je Sam ?',
-      theme:
-          ThemeData(primarySwatch: Colors.blue, brightness: Brightness.light),
-      darkTheme: ThemeData(brightness: Brightness.dark),
-      themeMode: ThemeMode.system,
-      home: Dashboard()
+      theme: ThemeData(primarySwatch: Colors.lightBlue, brightness: Brightness.dark),
+      home: Dashboard(),
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'dart:async';
-import 'dart:ffi';
 
+import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:suis_je_sam/model/drink.dart';
+import 'package:suis_je_sam/tools/globals.dart' as globals;
 
 class Dashboard extends StatefulWidget {
   @override
@@ -11,35 +13,33 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  // Variables pour les calculs
   double currentTx = 0.0;
   double rawTx = 0.0;
   int drinked = 0;
   bool isYoung;
   int userWeight;
   double userGenderTx;
-  double cardElevation = 5.0;
-  Size mqSize;
   int startDate;
   int currentDate;
-  Timer timer;
   bool isEmptyStomach = false;
   int restToDecuve = 0;
-  List<dynamic> helps = [
-    // Liste des textes et images à mettre dans le centre d'aide
-    {
-      'image': 'images/beer.png',
-      'text': 'Une bière de 8°, vous choisissez la quantité ensuite.'
-    },
-    {'image': 'images/wine.png', 'text': 'Un verre de vin de 14cL à 12°.'},
-    {
-      'image': 'images/eating.png',
-      'text': 'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'
-    },
-    {
-      'image': 'images/warning.png',
-      'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
-    }
-  ];
+
+  double beerDegree = globals.beerDegree;
+  int beerMl = 250;
+  double wineDegree = globals.wineDegree;
+  int wineMl = globals.wineMl;
+
+  List<Drink> beers = [];
+  List<Drink> wines = [];
+
+  // Variables pour le design
+  double clayRadius = globals.clayRadius;
+  Color baseColor = globals.baseColor;
+  Size mqSize;
+  double iconSize = 35.0;
+
+  Timer timer;
 
   // Lors de l'initialisation
   @override
@@ -62,6 +62,36 @@ class _DashboardState extends State<Dashboard> {
     mqSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                  child: Center(child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35))),
+                  margin: EdgeInsets.only(bottom: 2.0),
+              ),
+              ListTile(
+                title: Text("Mes informations", style: TextStyle(fontSize: 20)),
+                leading: Icon(Icons.account_circle, size: 30),
+                onTap: (() {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/informations')
+                      .then((_) => getShared());
+                }),
+              ),
+              ListTile(
+                title: Text("Aide", style: TextStyle(fontSize: 20)),
+                leading: Icon(Icons.help, size: 30),
+                onTap: (() {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/help');
+                }),
+              )
+            ],
+          )
+        ),
+      ),
       appBar: AppBar(
         title: Text("Tableau de bord"),
         actions: [
@@ -69,13 +99,6 @@ class _DashboardState extends State<Dashboard> {
               onPressed: (() => refresh()),
               icon: Icon(Icons.refresh, color: Colors.white),
               iconSize: 30),
-          IconButton(
-              onPressed: (() {
-                Navigator.pushNamed(context, '/informations')
-                    .then((_) => getShared());
-              }),
-              icon: Icon(Icons.account_circle, color: Colors.white),
-              iconSize: 30)
         ],
       ),
       body: Center(
@@ -84,22 +107,27 @@ class _DashboardState extends State<Dashboard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Card(
-                shape: roundedShape(),
-                elevation: cardElevation,
-                child: Container(
-                    child: MergeSemantics(
+              ClayContainer(
+                color: baseColor,
+                borderRadius: clayRadius,
+                child: MergeSemantics(
                   child: ListTile(
                     title: Text('Je suis à jeun',
                         style: TextStyle(fontSize: 25.0)),
-                    trailing: CupertinoSwitch(
-                      value: isEmptyStomach,
-                      onChanged: (bool value) {
-                        setState(() {
-                          isEmptyStomach = value;
-                          decrementTaux();
-                        });
-                      },
+                    trailing: ClayContainer(
+                      curveType: CurveType.convex,
+                      borderRadius: 75,
+                      color: baseColor,
+                      child: CupertinoSwitch(
+                        value: isEmptyStomach,
+                        activeColor: Colors.lightBlue,
+                        onChanged: (bool value) {
+                          setState(() {
+                            isEmptyStomach = value;
+                            decrementTaux();
+                          });
+                        },
+                      ),
                     ),
                     onTap: () {
                       setState(() {
@@ -108,53 +136,155 @@ class _DashboardState extends State<Dashboard> {
                       });
                     },
                   ),
-                )),
+                ),
               ),
-              Card(
-                  shape: roundedShape(),
-                  elevation: cardElevation,
-                  child: Column(children: [
-                    Center(
-                      child: Row(
+              ClayContainer(
+                width: mqSize.width,
+                color: baseColor,
+                borderRadius: clayRadius,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      child: Container(
+                          height: mqSize.height / 6,
+                          width: mqSize.width / 3,
+                          child: Image.asset('images/beer.png')),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ClayContainer(
+                              color: baseColor,
+                                curveType: CurveType.concave,
+                                borderRadius: 75.0,
+                                child: IconButton(
+                                  onPressed: (() => refreshBeers()),
+                                  icon: Icon(Icons.refresh),
+                                  iconSize: iconSize,
+                                )),
+                            Container(
+                              padding: EdgeInsets.all(10.0),
+                              child: Text("${beers.length}",
+                                  style: TextStyle(fontSize: 30.0)),
+                            ),
+                            ClayContainer(
+                              color: baseColor,
+                                curveType: CurveType.convex,
+                                borderRadius: 75.0,
+                                child: IconButton(
+                                    onPressed: (() =>
+                                        addDrink(DrinkTitle.beer)),
+                                    icon: Icon(Icons.arrow_drop_up),
+                                    iconSize: iconSize)),
+                          ],
+                        ),
+                        Container(
+                            padding: EdgeInsets.only(top: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ClayContainer(
+                                  emboss: (beerMl == 250),
+                                  curveType: (beerMl == 250)
+                                      ? CurveType.concave
+                                      : CurveType.convex,
+                                  borderRadius: 50.0,
+                                  color: baseColor,
+                                  child: TextButton(
+                                      style: beersMlShape(),
+                                      onPressed: (() =>
+                                          setState(() => beerMl = 250)),
+                                      child: Text("25")),
+                                ),
+                                Container(
+                                  padding:
+                                      EdgeInsets.only(left: 10.0, right: 10.0),
+                                  child: ClayContainer(
+                                    emboss: (beerMl == 330),
+                                    curveType: (beerMl == 330)
+                                        ? CurveType.concave
+                                        : CurveType.convex,
+                                    borderRadius: 50.0,
+                                    color: baseColor,
+                                    child: TextButton(
+                                        style: beersMlShape(),
+                                        onPressed: (() =>
+                                            setState(() => beerMl = 330)),
+                                        child: Text("33")),
+                                  ),
+                                ),
+                                ClayContainer(
+                                  emboss: (beerMl == 500),
+                                  curveType: (beerMl == 500)
+                                      ? CurveType.concave
+                                      : CurveType.convex,
+                                  borderRadius: 50.0,
+                                  color: baseColor,
+                                  child: TextButton(
+                                      style: beersMlShape(),
+                                      onPressed: (() =>
+                                          setState(() => beerMl = 500)),
+                                      child: Text("50")),
+                                )
+                              ],
+                            ))
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              ClayContainer(
+                  width: mqSize.width,
+                  color: baseColor,
+                  borderRadius: clayRadius,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                        child: Container(
+                            height: mqSize.height / 6,
+                            width: mqSize.width / 3,
+                            child: Image.asset('images/wine.png')),
+                      ),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          InkWell(
-                              onTap: (() => displayDialog()),
-                              child: Container(
-                                padding: EdgeInsets.only(top: 20.0),
-                                child: Container(
-                                    height: mqSize.height / 6,
-                                    width: mqSize.width / 3,
-                                    child: Image.asset('images/beer.png')),
+                          ClayContainer(
+                              color: baseColor,
+                              curveType: CurveType.concave,
+                              borderRadius: 75.0,
+                              child: IconButton(
+                                onPressed: (() => removeDrink(DrinkTitle.wine)),
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: iconSize,
                               )),
-                          InkWell(
-                              onTap: (() => incrementTaux(140, 0.12)),
-                              child: Container(
-                                padding: EdgeInsets.only(top: 20.0),
-                                child: Container(
-                                    height: mqSize.height / 6,
-                                    width: mqSize.width / 3,
-                                    child: Image.asset('images/wine.png')),
+                          Container(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text("${wines.length}",
+                                style: TextStyle(fontSize: 30.0)),
+                          ),
+                          ClayContainer(
+                              color: baseColor,
+                              curveType: CurveType.convex,
+                              borderRadius: 75.0,
+                              child: IconButton(
+                                onPressed: (() => addDrink(DrinkTitle.wine)),
+                                icon: Icon(Icons.arrow_drop_up),
+                                iconSize: iconSize,
                               )),
                         ],
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0.9, -1.0),
-                      heightFactor: 0.5,
-                      child: FloatingActionButton(
-                        heroTag: "counterBtn",
-                        backgroundColor: Colors.white,
-                        onPressed: null,
-                        child: Text(drinked.toString(),
-                            style: TextStyle(
-                                fontSize: 30, color: Colors.grey[800])),
-                      ),
-                    )
-                  ])),
-              Card(
-                shape: roundedShape(),
-                elevation: cardElevation,
+                      )
+                    ],
+                  )),
+              ClayContainer(
+                color: baseColor,
+                borderRadius: 20.0,
                 child: Container(
                   height: mqSize.height / 4,
                   width: mqSize.width,
@@ -181,77 +311,73 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "helpBtn",
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        onPressed: helpDialog,
-        child: Icon(Icons.help_outline, size: 55),
-      ),
     );
   }
 
-  RoundedRectangleBorder roundedShape() {
-    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0));
+  /// Ajout d'un verre
+  void addDrink(DrinkTitle alcool) {
+    switch (alcool) {
+      case DrinkTitle.beer:
+        setState(() => beers.add(new Drink(degree: beerDegree, ml: beerMl)));
+        break;
+      case DrinkTitle.wine:
+        setState(() => wines.add(new Drink(degree: wineDegree, ml: wineMl)));
+        break;
+    }
+    calculTaux();
   }
 
-  void helpDialog() {
-    AlertDialog alert = AlertDialog(
-      shape: roundedShape(),
-      elevation: cardElevation,
-      title: Text("Aide", style: TextStyle(fontSize: 35.0)),
-      content: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: helpList()),
-      actions: [
-        TextButton(
-            onPressed: (() => Navigator.pop(context)),
-            child: Text("OK", style: TextStyle(fontSize: 20)))
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: ((BuildContext context) => alert),
-    );
+  void refreshBeers() {
+    if (beers.isNotEmpty) {
+      setState(() => beers.clear());
+      calculTaux();
+    }
   }
 
-  /// Retourne la liste de widgets à mettre dans le centre d'aide
-  List<Widget> helpList() {
-    List<Widget> rows = [];
-    helps.forEach((element) {
-      rows.add(Card(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        elevation: 10.0,
-        child: Container(
-            padding: EdgeInsets.all(5.0),
-            child: ListTile(
-              title: Text(element['text'], style: TextStyle(fontSize: 18)),
-              leading: Image.asset(element['image'], width: mqSize.width / 10),
-            )),
-      ));
-    });
-    return rows;
+  /// Suppression d'un verre
+  void removeDrink(DrinkTitle alcool) {
+    switch (alcool) {
+      case DrinkTitle.beer:
+        if (beers.isNotEmpty) {
+          setState(() => beers.removeAt(0));
+          calculTaux();
+        }
+        break;
+      case DrinkTitle.wine:
+        if (wines.isNotEmpty) {
+          setState(() => wines.removeAt(0));
+          calculTaux();
+        }
+        break;
+    }
+    calculTaux();
   }
 
   /// Augmentation du taux d'alcoolémie
-  void incrementTaux(int mL, double degree) {
+  void calculTaux() {
     setState(() {
-      if (drinked == 0) {
-        // Récupération du timestamp du premier verre bu
+      rawTx = 0;
+      if ((wines.length + beers.length) == 1) {
         startDate =
             (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
       }
       currentDate =
           (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
 
-      // Incrémentation du nombre de verres bu
-      drinked++;
+      if (beers.isNotEmpty) {
+        beers.forEach((element) {
+          rawTx +=
+              (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+        });
+      }
 
-      // Calcul du taux
-      // ((mL * degrés * densité de l'alcool) / (poids * taux)) - (txElimination * (nbQuartHeureMtn-nbQuartHeurePremierVerre))
-      rawTx += (mL * degree * 0.8) / (userWeight * userGenderTx);
+      if (wines.isNotEmpty) {
+        wines.forEach((element) {
+          rawTx +=
+              (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+        });
+      }
+
       currentTx = rawTx;
       decrementTaux();
     });
@@ -259,7 +385,7 @@ class _DashboardState extends State<Dashboard> {
 
   /// Calcul du taux toutes les minutes
   void decrementTaux() {
-    if (drinked > 0 && rawTx > 0) {
+    if ((wines.isNotEmpty || beers.isNotEmpty) && rawTx > 0) {
       setState(() {
         // Récupération du nombre de quarts d'heures en timestamp
         currentDate =
@@ -286,7 +412,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  /// Calcul pour savoir
+  /// Calcul pour savoir combien de temps il reste avant de descendre sous la limite
   void calculRestToDecuve() {
     setState(() {
       restToDecuve = 0;
@@ -299,6 +425,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  /// Retourne le texte signifiant dans combien de temps l'utilisateur peut conduire
   String formatRestToDecuve() {
     if (currentTx == 0) {
       return 'Ajoutez un verre pour commencer';
@@ -318,42 +445,13 @@ class _DashboardState extends State<Dashboard> {
     return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
 
-  /// Affichage du dialog pour choisir la quantité
-  void displayDialog() {
-    // Création du dialog
-    AlertDialog alert = AlertDialog(
-        elevation: cardElevation,
-        shape: roundedShape(),
-        content: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                  onPressed: (() {
-                    incrementTaux(250, 0.08);
-                    Navigator.pop(context);
-                  }),
-                  child: dialogStyle("25cl")),
-              TextButton(
-                  onPressed: (() {
-                    incrementTaux(330, 0.08);
-                    Navigator.pop(context);
-                  }),
-                  child: dialogStyle("33cL")),
-              TextButton(
-                  onPressed: (() {
-                    incrementTaux(500, 0.08);
-                    Navigator.pop(context);
-                  }),
-                  child: dialogStyle("50cL"))
-            ],
-          ),
-        ));
-    // Affichage du dialog
-    showDialog(
-      context: context,
-      builder: ((BuildContext context) => alert),
-    );
+  /// Les arrondis pour les mL des bières
+  ButtonStyle beersMlShape() {
+    return ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15.0),
+    )));
   }
 
   /// Initialisation des sharedPreferences
@@ -367,18 +465,14 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  /// Style des button text dans le dialog
-  Text dialogStyle(String title) {
-    return Text(title, style: TextStyle(fontSize: 35, color: Colors.blue));
-  }
-
   /// Remise à zéro
   void refresh() {
     setState(() {
       currentTx = 0.0;
       rawTx = 0.0;
       restToDecuve = 0;
-      drinked = 0;
+      beers.clear();
+      wines.clear();
     });
   }
 }
