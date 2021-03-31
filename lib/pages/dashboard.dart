@@ -25,7 +25,7 @@ class _DashboardState extends State<Dashboard> {
   int currentDate;
   bool isEmptyStomach = false;
   int restToDecuve = 0;
-  DateTime hourOfDecuve;
+  int hourOfDecuve;
 
   double beerDegree = globals.beerDegree;
   int beerMl = 250;
@@ -42,6 +42,7 @@ class _DashboardState extends State<Dashboard> {
   double iconSize = 35.0;
 
   Timer timer;
+  NotificationPlugin notificationPlugin;
 
   // Lors de l'initialisation
   @override
@@ -50,8 +51,7 @@ class _DashboardState extends State<Dashboard> {
     // Récupération des informations dans les shared préférences
     getShared();
     timer = Timer.periodic(Duration(seconds: 60), (Timer t) => decrementTaux());
-    NotificationPlugin notificationPlugin = new NotificationPlugin();
-    notificationPlugin.showNotification();
+    notificationPlugin = new NotificationPlugin();
   }
 
   // Lors d'une mise en arrière plan
@@ -421,10 +421,10 @@ class _DashboardState extends State<Dashboard> {
         restToDecuve++;
       }
       restToDecuve += (isEmptyStomach == true) ? 2 : 4;
-      hourOfDecuve = DateTime.fromMicrosecondsSinceEpoch(
-          (DateTime.now().millisecondsSinceEpoch +
-                  (restToDecuve * 15 * 60 * 1000)) *
-              1000);
+      hourOfDecuve = ((DateTime.now().millisecondsSinceEpoch) + (restToDecuve * 15 * 60 * 1000)) * 1000;
+      if (currentTx > (isYoung ? 0.2 : 0.5)) {
+        notificationPlugin.showNotification(hourOfDecuve);
+      }
     });
   }
 

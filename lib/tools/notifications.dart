@@ -1,13 +1,16 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tzData;
 
 class NotificationPlugin {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
+  NotificationPlugin() {
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+  }
+
   /// Demande d'affichage de notifications
   _requestIOSPermission() {
-    if (flutterLocalNotificationsPlugin == null) {
-      flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-    }
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
@@ -23,21 +26,25 @@ class NotificationPlugin {
     var initializationSettingsAndroid =
         AndroidInitializationSettings('app_notf_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: false,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
-        // your call back to the UI
-      },
-    );
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: false);
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
   }
 
+  Future<void> cancelNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
   /// Envoie d'une notification
-  Future<void> showNotification() async {
+  Future<void> showNotification(int seconds) async {
+    // On désactive les précédentes notifications
+    cancelNotifications();
+
     _requestIOSPermission();
     _initializePlatformSpecifics();
+
     var androidChannelSpecifics = AndroidNotificationDetails(
       'CHANNEL_ID',
       'CHANNEL_NAME',
@@ -49,17 +56,23 @@ class NotificationPlugin {
       styleInformation: DefaultStyleInformation(true, true),
     );
     var iosChannelSpecifics = IOSNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true
-    );
+        presentAlert: true, presentBadge: true, presentSound: true);
     var platformChannelSpecifics = NotificationDetails(
         android: androidChannelSpecifics, iOS: iosChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      'Test Title', // Notification Title
-      'Test Body', // Notification Body, set as null to remove the body
-      platformChannelSpecifics// Notification Payload
-    );
+
+    var scheduleNotificationDateTime =
+        DateTime.fromMillisecondsSinceEpoch(seconds);
+
+    // Initialisation des UTC et date en fonction de Paris
+    tzData.initializeTimeZones();
+    final location = tz.getLocation('Europe/Paris');
+    final scheduleDateTime =
+        tz.TZDateTime.from(scheduleNotificationDateTime, location);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(0, 'Vous pouvez de nouveau conduire',
+        'Utilisez un alcootest par précaution', scheduleDateTime, platformChannelSpecifics,
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 }
