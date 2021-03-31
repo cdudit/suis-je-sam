@@ -24,6 +24,7 @@ class _DashboardState extends State<Dashboard> {
   int currentDate;
   bool isEmptyStomach = false;
   int restToDecuve = 0;
+  DateTime hourOfDecuve;
 
   double beerDegree = globals.beerDegree;
   int beerMl = 250;
@@ -65,33 +66,33 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       drawer: Drawer(
         child: Container(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                  child: Center(child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35))),
-                  margin: EdgeInsets.only(bottom: 2.0),
-              ),
-              ListTile(
-                title: Text("Mes informations", style: TextStyle(fontSize: 20)),
-                leading: Icon(Icons.account_circle, size: 30),
-                onTap: (() {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/informations')
-                      .then((_) => getShared());
-                }),
-              ),
-              ListTile(
-                title: Text("Aide", style: TextStyle(fontSize: 20)),
-                leading: Icon(Icons.help, size: 30),
-                onTap: (() {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/help');
-                }),
-              )
-            ],
-          )
-        ),
+            child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Center(
+                  child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35))),
+              margin: EdgeInsets.only(bottom: 2.0),
+            ),
+            ListTile(
+              title: Text("Mes informations", style: TextStyle(fontSize: 20)),
+              leading: Icon(Icons.account_circle, size: 30),
+              onTap: (() {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/informations')
+                    .then((_) => getShared());
+              }),
+            ),
+            ListTile(
+              title: Text("Aide", style: TextStyle(fontSize: 20)),
+              leading: Icon(Icons.help, size: 30),
+              onTap: (() {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/help');
+              }),
+            )
+          ],
+        )),
       ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -161,7 +162,7 @@ class _DashboardState extends State<Dashboard> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ClayContainer(
-                              color: baseColor,
+                                color: baseColor,
                                 curveType: CurveType.concave,
                                 borderRadius: 75.0,
                                 child: IconButton(
@@ -175,7 +176,7 @@ class _DashboardState extends State<Dashboard> {
                                   style: TextStyle(fontSize: 30.0)),
                             ),
                             ClayContainer(
-                              color: baseColor,
+                                color: baseColor,
                                 curveType: CurveType.convex,
                                 borderRadius: 75.0,
                                 child: IconButton(
@@ -201,7 +202,8 @@ class _DashboardState extends State<Dashboard> {
                                       style: beersMlShape(),
                                       onPressed: (() =>
                                           setState(() => beerMl = 250)),
-                                      child: Text("25", style: TextStyle(fontSize: 20))),
+                                      child: Text("25",
+                                          style: TextStyle(fontSize: 20))),
                                 ),
                                 Container(
                                   padding:
@@ -217,7 +219,8 @@ class _DashboardState extends State<Dashboard> {
                                         style: beersMlShape(),
                                         onPressed: (() =>
                                             setState(() => beerMl = 330)),
-                                        child: Text("33", style: TextStyle(fontSize: 20))),
+                                        child: Text("33",
+                                            style: TextStyle(fontSize: 20))),
                                   ),
                                 ),
                                 ClayContainer(
@@ -231,7 +234,8 @@ class _DashboardState extends State<Dashboard> {
                                       style: beersMlShape(),
                                       onPressed: (() =>
                                           setState(() => beerMl = 500)),
-                                      child: Text("50", style: TextStyle(fontSize: 20))),
+                                      child: Text("50",
+                                          style: TextStyle(fontSize: 20))),
                                 )
                               ],
                             ))
@@ -329,6 +333,7 @@ class _DashboardState extends State<Dashboard> {
     calculTaux();
   }
 
+  /// Remise à zéro des bières bues
   void refreshBeers() {
     if (beers.isNotEmpty) {
       setState(() => beers.clear());
@@ -407,12 +412,16 @@ class _DashboardState extends State<Dashboard> {
   void calculRestToDecuve() {
     setState(() {
       restToDecuve = 0;
-      double calculTx = currentTx;
-      while (calculTx > (isYoung ? 0.2 : 0.5)) {
-        calculTx -= (userGenderTx == 0.7) ? 0.025 : 0.02125;
+      double tmp = currentTx;
+      while (tmp > (isYoung ? 0.2 : 0.5)) {
+        tmp -= (userGenderTx == 0.7) ? 0.03125 : 0.024375;
         restToDecuve++;
       }
       restToDecuve += (isEmptyStomach == true) ? 2 : 4;
+      hourOfDecuve = DateTime.fromMicrosecondsSinceEpoch(
+          (DateTime.now().millisecondsSinceEpoch +
+                  (restToDecuve * 15 * 60 * 1000)) *
+              1000);
     });
   }
 
