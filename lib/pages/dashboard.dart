@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:suis_je_sam/model/drink.dart';
 import 'package:suis_je_sam/tools/globals.dart' as globals;
+import 'package:suis_je_sam/tools/notifications.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -49,6 +50,8 @@ class _DashboardState extends State<Dashboard> {
     // Récupération des informations dans les shared préférences
     getShared();
     timer = Timer.periodic(Duration(seconds: 60), (Timer t) => decrementTaux());
+    NotificationPlugin notificationPlugin = new NotificationPlugin();
+    notificationPlugin.showNotification();
   }
 
   // Lors d'une mise en arrière plan
