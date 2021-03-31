@@ -18,7 +18,7 @@ class _InformationsState extends State<Informations> {
 
   // Variables pour le design
   double clayRadius = globals.clayRadius;
-  Color baseColor = globals.baseColor;
+  Color baseColor;
   Size mqSize;
 
   @override
@@ -37,9 +37,12 @@ class _InformationsState extends State<Informations> {
   @override
   Widget build(BuildContext context) {
     mqSize = MediaQuery.of(context).size;
+    baseColor = Theme.of(context).accentColor;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Vos informations")
+          iconTheme: IconThemeData(color: Colors.white),
+          title: Text("Vos informations", style: TextStyle(color: Colors.white))
       ),
       body: Center(
         child: Container(

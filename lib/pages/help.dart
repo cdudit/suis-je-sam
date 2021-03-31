@@ -14,7 +14,7 @@ class _HelpState extends State<Help> {
   int wineMl = globals.wineMl;
   Size mqSize;
   double clayRadius = 20.0;
-  Color baseColor = Color(0xFF292D32);
+  Color baseColor;
 
   @override
   void initState() {
@@ -39,10 +39,12 @@ class _HelpState extends State<Help> {
   @override
   Widget build(BuildContext context) {
     mqSize = MediaQuery.of(context).size;
+    baseColor = Theme.of(context).accentColor;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Aide"),
-      ),
+          iconTheme: IconThemeData(color: Colors.white),
+          title: Text("Aide", style: TextStyle(color: Colors.white))),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(

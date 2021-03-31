@@ -35,7 +35,7 @@ class _DashboardState extends State<Dashboard> {
 
   // Variables pour le design
   double clayRadius = globals.clayRadius;
-  Color baseColor = globals.baseColor;
+  Color baseColor;
   Size mqSize;
   double iconSize = 35.0;
 
@@ -60,6 +60,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     mqSize = MediaQuery.of(context).size;
+    baseColor = Theme.of(context).accentColor;
 
     return Scaffold(
       drawer: Drawer(
@@ -93,11 +94,12 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       appBar: AppBar(
-        title: Text("Tableau de bord"),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Tableau de bord", style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
               onPressed: (() => refresh()),
-              icon: Icon(Icons.refresh, color: Colors.white),
+              icon: Icon(Icons.refresh),
               iconSize: 30),
         ],
       ),
@@ -260,7 +262,7 @@ class _DashboardState extends State<Dashboard> {
                               curveType: CurveType.concave,
                               borderRadius: 75.0,
                               child: IconButton(
-                                onPressed: (() => removeDrink(DrinkTitle.wine)),
+                                onPressed: (() => removeWine()),
                                 icon: Icon(Icons.arrow_drop_down),
                                 iconSize: iconSize,
                               )),
@@ -335,22 +337,11 @@ class _DashboardState extends State<Dashboard> {
   }
 
   /// Suppression d'un verre
-  void removeDrink(DrinkTitle alcool) {
-    switch (alcool) {
-      case DrinkTitle.beer:
-        if (beers.isNotEmpty) {
-          setState(() => beers.removeAt(0));
-          calculTaux();
-        }
-        break;
-      case DrinkTitle.wine:
-        if (wines.isNotEmpty) {
-          setState(() => wines.removeAt(0));
-          calculTaux();
-        }
-        break;
+  void removeWine() {
+    if (wines.isNotEmpty) {
+      setState(() => wines.removeAt(0));
+      calculTaux();
     }
-    calculTaux();
   }
 
   /// Augmentation du taux d'alcoolémie
@@ -400,7 +391,7 @@ class _DashboardState extends State<Dashboard> {
         if ((isEmptyStomach == true && difference > 2) ||
             (isEmptyStomach == false && difference > 4)) {
           currentTx = rawTx -
-              ((userGenderTx == 0.7) ? 0.025 : 0.02125) *
+              ((userGenderTx == 0.7) ? 0.03125 : 0.024375) *
                   ((currentDate - startDate) -
                       (isEmptyStomach == true ? 2 : 4));
           if (currentTx < 0) {
