@@ -119,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
                 child: MergeSemantics(
                   child: ListTile(
                     title: Text('Je suis à jeun',
-                        style: TextStyle(fontSize: 23.0)),
+                        style: Theme.of(context).textTheme.headline5),
                     trailing: ClayContainer(
                       curveType: CurveType.convex,
                       borderRadius: 75,
@@ -170,7 +170,7 @@ class _DashboardState extends State<Dashboard> {
                             Container(
                               padding: EdgeInsets.all(10.0),
                               child: Text("${beers.length}",
-                                  style: TextStyle(fontSize: 30.0)),
+                                  style: Theme.of(context).textTheme.headline4),
                             ),
                             ClayContainer(
                                 color: baseColor,
@@ -270,7 +270,7 @@ class _DashboardState extends State<Dashboard> {
                           Container(
                             padding: EdgeInsets.all(10.0),
                             child: Text("${wines.length}",
-                                style: TextStyle(fontSize: 30.0)),
+                                style: Theme.of(context).textTheme.headline4),
                           ),
                           ClayContainer(
                               color: baseColor,

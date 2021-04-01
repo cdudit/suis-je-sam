@@ -56,7 +56,7 @@ class _InformationsState extends State<Informations> {
                 child: MergeSemantics(
                   child: ListTile(
                     title: Text('Jeune conducteur',
-                        style: TextStyle(fontSize: 25.0)),
+                        style: Theme.of(context).textTheme.headline5),
                     trailing: ClayContainer(
                       color: baseColor,
                       borderRadius: 50,

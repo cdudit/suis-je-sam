@@ -68,15 +68,15 @@ class _HelpState extends State<Help> {
     List<Widget> rows = [];
     helps.forEach((element) {
       rows.add(Container(
-          padding: EdgeInsets.only(bottom: 10.0),
-          margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+          padding: EdgeInsets.only(bottom: 10),
+          margin: EdgeInsets.symmetric(vertical: 10),
           child: ClayContainer(
             color: baseColor,
             borderRadius: clayRadius,
             child: Container(
-                margin: EdgeInsets.all(5.0),
+                margin: EdgeInsets.all(5),
                 child: ListTile(
-                  title: Text(element.content, style: TextStyle(fontSize: 18)),
+                  title: Text(element.content, style: Theme.of(context).textTheme.headline6),
                   leading:
                       Image.asset(element.imgPath, width: mqSize.width / 10),
                 )),
