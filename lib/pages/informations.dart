@@ -42,8 +42,8 @@ class _InformationsState extends State<Informations> {
     return Scaffold(
       appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("Vos informations", style: TextStyle(color: Colors.white))
-      ),
+          title:
+              Text("Vos informations", style: TextStyle(color: Colors.white))),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(10.0),
@@ -177,16 +177,27 @@ class _InformationsState extends State<Informations> {
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
   ClayContainer cardPicture(String path, int divider, myUserGender) {
     return ClayContainer(
-      color: baseColor,
-      borderRadius: 75,
-      emboss: (userGender == myUserGender),
-      curveType: (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
-      child: Container(
-        padding: EdgeInsets.all(5.0),
-        child: Image.asset(path,
-            width: MediaQuery.of(context).size.width / divider, fit: BoxFit.cover)
-      )
-    );
+        color: baseColor,
+        borderRadius: 75,
+        width: mqSize.width / divider,
+        height: mqSize.height / divider,
+        emboss: (userGender == myUserGender),
+        curveType:
+            (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
+        depth: (userGender == myUserGender) ? 15 : 0,
+        spread: (userGender == myUserGender) ? 10 : 0,
+        child: Container(
+          padding: EdgeInsets.all(5.0),
+          child: (userGender == myUserGender) ? Icon(Icons.check, size: 50) : Text(""),
+          decoration: BoxDecoration(
+              color: (userGender == myUserGender) ? Colors.green : Colors.transparent,
+              borderRadius: BorderRadius.all(Radius.circular(75)),
+              image: DecorationImage(
+                  colorFilter: new ColorFilter.mode(
+                      Colors.black.withOpacity((userGender == myUserGender) ? 0.5 : 1), BlendMode.dstATop),
+                  image: Image.asset(path).image,
+                  fit: BoxFit.cover)),
+        ));
   }
 
   /// Gestion du padding des cartes

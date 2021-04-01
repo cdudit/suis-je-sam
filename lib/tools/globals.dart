@@ -1,7 +1,5 @@
 library suis_je_sam.globals;
 
-import 'dart:ui';
-
 double clayRadius = 20.0;
 double beerDegree = 0.06;
 double wineDegree = 0.13;
