@@ -22,6 +22,10 @@ class _HelpState extends State<Help> {
     super.initState();
     helps = [
       new Helper(
+          imgPath: "images/warning.png",
+          content:
+          'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'),
+      new Helper(
           imgPath: "images/beer.png",
           content:
               'Une bière de ${(beerDegree * 100).round()}°, vous choisissez la quantité.'),
@@ -34,13 +38,13 @@ class _HelpState extends State<Help> {
           content:
               'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'),
       new Helper(
-          imgPath: "images/warning.png",
-          content:
-              'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'),
-      new Helper(
           imgPath: "images/information.png",
           content:
               'Vos informations sont stockées sur votre appareil uniquement.'),
+      new Helper(
+        imgPath: "images/notification.png",
+        content: 'Vous recevrez une notification lorsque vous pourrez reprendre la route.'
+      )
     ];
   }
 

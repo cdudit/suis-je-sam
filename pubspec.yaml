@@ -64,6 +64,7 @@ flutter:
     - images/eating.png
     - images/warning.png
     - images/information.png
+    - images/notification.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
