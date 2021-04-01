@@ -151,13 +151,7 @@ class _DashboardState extends State<Dashboard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                      child: Container(
-                          height: mqSize.height / 6,
-                          width: mqSize.width / 3,
-                          child: Image.asset('images/beer.png')),
-                    ),
+                    drinkContainer('images/beer.png'),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -260,13 +254,7 @@ class _DashboardState extends State<Dashboard> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                        child: Container(
-                            height: mqSize.height / 6,
-                            width: mqSize.width / 3,
-                            child: Image.asset('images/wine.png')),
-                      ),
+                      drinkContainer('images/wine.png'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -326,6 +314,16 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
+    );
+  }
+
+  Container drinkContainer(String path) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10.0),
+      child: Container(
+          padding: EdgeInsets.symmetric(vertical: 15),
+          width: mqSize.width / 4,
+          child: Image.asset(path)),
     );
   }
 

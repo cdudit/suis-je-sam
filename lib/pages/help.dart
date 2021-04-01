@@ -32,6 +32,10 @@ class _HelpState extends State<Help> {
       {
         'image': 'images/warning.png',
         'text': 'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'
+      },
+      {
+        'image': 'images/information.png',
+        'text': 'Toutes vos informations sont sauvegardées sur votre appareil, par conséquent ne sont ni revendues, ni partagées.'
       }
     ];
   }

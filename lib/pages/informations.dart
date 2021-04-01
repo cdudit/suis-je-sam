@@ -121,9 +121,8 @@ class _InformationsState extends State<Informations> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Image.asset("images/weight.png", width: mqSize.width / 4),
+                      Image.asset("images/weight.png", width: mqSize.width / 3.5),
                       Container(
-                        width: mqSize.width / 1.75,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -132,20 +131,23 @@ class _InformationsState extends State<Informations> {
                               child: ClayContainer(
                                 color: baseColor,
                                 borderRadius: clayRadius,
-                                child: CupertinoSlider(
-                                    value: (userWeight != null)
-                                        ? userWeight.toDouble()
-                                        : 1.0,
-                                    activeColor: Colors.lightBlue,
-                                    min: 1.0,
-                                    max: 150.0,
-                                    divisions: 150,
-                                    onChanged: ((double d) {
-                                      setState(() {
-                                        userWeight = d.round();
-                                        sendToShared();
-                                      });
-                                    })),
+                                child: Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: CupertinoSlider(
+                                      value: (userWeight != null)
+                                          ? userWeight.toDouble()
+                                          : 1.0,
+                                      activeColor: Colors.lightBlue,
+                                      min: 1.0,
+                                      max: 150.0,
+                                      divisions: 150,
+                                      onChanged: ((double d) {
+                                        setState(() {
+                                          userWeight = d.round();
+                                          sendToShared();
+                                        });
+                                      })),
+                                ),
                               ),
                             ),
                             infosResult((userWeight != null)
