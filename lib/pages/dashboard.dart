@@ -465,9 +465,12 @@ class _DashboardState extends State<Dashboard> {
   void getShared() {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
-        userWeight = prefs.getInt('userWeight');
+        userWeight = prefs.getInt('userWeight') ?? null;
         userGenderTx = (prefs.getInt('userGender') == 0) ? 0.7 : 0.6;
-        isYoung = prefs.getBool('isYoung');
+        isYoung = prefs.getBool('isYoung') ?? null;
+        if (userWeight == null || isYoung == null) {
+          Navigator.pushNamed(context, '/informations').then((_) => getShared());
+        }
       });
     });
   }

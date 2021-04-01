@@ -24,7 +24,7 @@ class NotificationPlugin {
   /// Initialisation des plateformes
   _initializePlatformSpecifics() {
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('app_notf_icon');
+        AndroidInitializationSettings('launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
