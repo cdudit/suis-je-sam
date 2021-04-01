@@ -40,7 +40,7 @@ class _HelpState extends State<Help> {
       new Helper(
           imgPath: "images/information.png",
           content:
-              'Toutes vos informations sont sauvegardées sur votre appareil, par conséquent ne sont ni revendues, ni partagées.'),
+              'Vos informations sont stockées sur votre appareil uniquement.'),
     ];
   }
 
