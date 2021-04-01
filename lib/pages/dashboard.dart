@@ -198,7 +198,9 @@ class _DashboardState extends State<Dashboard> {
                                   emboss: (beerMl == 250),
                                   curveType: (beerMl == 250)
                                       ? CurveType.concave
-                                      : CurveType.convex,
+                                      : CurveType.none,
+                                  spread: (beerMl == 250) ? 10 : 0,
+                                  depth: (beerMl == 250) ? 10 : 0,
                                   borderRadius: 50.0,
                                   color: baseColor,
                                   child: TextButton(
@@ -215,7 +217,9 @@ class _DashboardState extends State<Dashboard> {
                                     emboss: (beerMl == 330),
                                     curveType: (beerMl == 330)
                                         ? CurveType.concave
-                                        : CurveType.convex,
+                                        : CurveType.none,
+                                    spread: (beerMl == 330) ? 10 : 0,
+                                    depth: (beerMl == 330) ? 10 : 0,
                                     borderRadius: 50.0,
                                     color: baseColor,
                                     child: TextButton(
@@ -230,7 +234,9 @@ class _DashboardState extends State<Dashboard> {
                                   emboss: (beerMl == 500),
                                   curveType: (beerMl == 500)
                                       ? CurveType.concave
-                                      : CurveType.convex,
+                                      : CurveType.none,
+                                  spread: (beerMl == 500) ? 10 : 0,
+                                  depth: (beerMl == 500) ? 10 : 0,
                                   borderRadius: 50.0,
                                   color: baseColor,
                                   child: TextButton(
@@ -425,6 +431,7 @@ class _DashboardState extends State<Dashboard> {
       if (currentTx > (isYoung ? 0.2 : 0.5)) {
         notificationPlugin.showNotification(hourOfDecuve);
       }
+      notificationPlugin.showNotification(DateTime.now().millisecondsSinceEpoch + 60 * 1000 * 1000);
     });
   }
 
