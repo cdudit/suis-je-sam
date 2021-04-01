@@ -26,7 +26,8 @@ dependencies:
   shared_preferences: ^2.0.5
   clay_containers: ^0.3.2
   flutter_launcher_icons: ^0.9.0
-
+  flutter_local_notifications: ^5.0.0
+  timezone: ^0.7.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -62,6 +63,7 @@ flutter:
     - images/wine.png
     - images/eating.png
     - images/warning.png
+    - images/information.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -42,8 +42,8 @@ class _InformationsState extends State<Informations> {
     return Scaffold(
       appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.white),
-          title: Text("Vos informations", style: TextStyle(color: Colors.white))
-      ),
+          title:
+              Text("Vos informations", style: TextStyle(color: Colors.white))),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(10.0),
@@ -56,7 +56,7 @@ class _InformationsState extends State<Informations> {
                 child: MergeSemantics(
                   child: ListTile(
                     title: Text('Jeune conducteur',
-                        style: TextStyle(fontSize: 25.0)),
+                        style: Theme.of(context).textTheme.headline5),
                     trailing: ClayContainer(
                       color: baseColor,
                       borderRadius: 50,
@@ -121,9 +121,8 @@ class _InformationsState extends State<Informations> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Image.asset("images/weight.png", width: mqSize.width / 4),
+                      Image.asset("images/weight.png", width: mqSize.width / 3.5),
                       Container(
-                        width: mqSize.width / 1.75,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -132,20 +131,23 @@ class _InformationsState extends State<Informations> {
                               child: ClayContainer(
                                 color: baseColor,
                                 borderRadius: clayRadius,
-                                child: CupertinoSlider(
-                                    value: (userWeight != null)
-                                        ? userWeight.toDouble()
-                                        : 1.0,
-                                    activeColor: Colors.lightBlue,
-                                    min: 1.0,
-                                    max: 150.0,
-                                    divisions: 150,
-                                    onChanged: ((double d) {
-                                      setState(() {
-                                        userWeight = d.round();
-                                        sendToShared();
-                                      });
-                                    })),
+                                child: Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: CupertinoSlider(
+                                      value: (userWeight != null)
+                                          ? userWeight.toDouble()
+                                          : 1.0,
+                                      activeColor: Colors.lightBlue,
+                                      min: 1.0,
+                                      max: 150.0,
+                                      divisions: 150,
+                                      onChanged: ((double d) {
+                                        setState(() {
+                                          userWeight = d.round();
+                                          sendToShared();
+                                        });
+                                      })),
+                                ),
                               ),
                             ),
                             infosResult((userWeight != null)
@@ -177,16 +179,27 @@ class _InformationsState extends State<Informations> {
   /// Affichage d'une image dans les bonnes dimensions pour l'écran
   ClayContainer cardPicture(String path, int divider, myUserGender) {
     return ClayContainer(
-      color: baseColor,
-      borderRadius: 75,
-      emboss: (userGender == myUserGender),
-      curveType: (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
-      child: Container(
-        padding: EdgeInsets.all(5.0),
-        child: Image.asset(path,
-            width: MediaQuery.of(context).size.width / divider, fit: BoxFit.cover)
-      )
-    );
+        color: baseColor,
+        borderRadius: 75,
+        width: mqSize.width / divider,
+        height: mqSize.height / divider,
+        emboss: (userGender == myUserGender),
+        curveType:
+            (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
+        depth: (userGender == myUserGender) ? 15 : 0,
+        spread: (userGender == myUserGender) ? 10 : 0,
+        child: Container(
+          padding: EdgeInsets.all(5.0),
+          child: (userGender == myUserGender) ? Icon(Icons.check, size: 50) : Text(""),
+          decoration: BoxDecoration(
+              color: (userGender == myUserGender) ? Colors.green : Colors.transparent,
+              borderRadius: BorderRadius.all(Radius.circular(75)),
+              image: DecorationImage(
+                  colorFilter: new ColorFilter.mode(
+                      Colors.black.withOpacity((userGender == myUserGender) ? 0.5 : 1), BlendMode.dstATop),
+                  image: Image.asset(path).image,
+                  fit: BoxFit.cover)),
+        ));
   }
 
   /// Gestion du padding des cartes
