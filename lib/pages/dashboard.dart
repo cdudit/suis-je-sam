@@ -425,11 +425,10 @@ class _DashboardState extends State<Dashboard> {
         restToDecuve++;
       }
       restToDecuve += (isEmptyStomach == true) ? 2 : 4;
-      hourOfDecuve = ((DateTime.now().millisecondsSinceEpoch) + (restToDecuve * 15 * 60 * 1000)) * 1000;
+      hourOfDecuve = DateTime.now().millisecondsSinceEpoch + (restToDecuve * 15 * 60 * 1000);
       if (currentTx > (isYoung ? 0.2 : 0.5)) {
         notificationPlugin.showNotification(hourOfDecuve);
       }
-      notificationPlugin.showNotification(DateTime.now().millisecondsSinceEpoch + 60 * 1000 * 1000);
     });
   }
 
