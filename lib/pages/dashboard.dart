@@ -471,6 +471,7 @@ class _DashboardState extends State<Dashboard> {
         if (userWeight == null || isYoung == null) {
           Navigator.pushNamed(context, '/informations').then((_) => getShared());
         }
+        calculTaux();
       });
     });
   }

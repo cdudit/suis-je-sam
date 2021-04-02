@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:suis_je_sam/pages/dashboard.dart';
 import 'package:suis_je_sam/pages/help.dart';
 import 'package:suis_je_sam/pages/informations.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+  ]);
   runApp(MyApp());
 }
 
