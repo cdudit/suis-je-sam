@@ -248,7 +248,11 @@ class _DashboardState extends State<Dashboard> {
         borderRadius: 50.0,
         color: baseColor,
         child: TextButton(
-            style: beersMlShape(),
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ))),
             onPressed: (() => setState(() => beerMl = ml)),
             child: Text("${(ml / 10).round()}", style: TextStyle(fontSize: 20))));
   }
@@ -441,15 +445,6 @@ class _DashboardState extends State<Dashboard> {
     return 'Vous pourrez conduire dans ${hour.toString()}h${min.toString()}';
   }
 
-  /// Les arrondis pour les mL des bières
-  ButtonStyle beersMlShape() {
-    return ButtonStyle(
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15.0),
-    )));
-  }
-
   /// Initialisation des sharedPreferences
   void getShared() {
     SharedPreferences.getInstance().then((prefs) {
@@ -474,6 +469,8 @@ class _DashboardState extends State<Dashboard> {
       restToDecuve = 0;
       beers.clear();
       wines.clear();
+      whiskies.clear();
+      notificationPlugin.cancelNotifications();
     });
   }
 }
