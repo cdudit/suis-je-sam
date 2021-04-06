@@ -352,26 +352,14 @@ class _DashboardState extends State<Dashboard> {
       currentDate =
           (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
 
-      if (beers.isNotEmpty) {
-        beers.forEach((element) {
-          rawTx +=
-              (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
-        });
-      }
-
-      if (wines.isNotEmpty) {
-        wines.forEach((element) {
-          rawTx +=
-              (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
-        });
-      }
-
-      if (whiskies.isNotEmpty) {
-        whiskies.forEach((element) {
-          rawTx +=
-              (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
-        });
-      }
+      [beers, wines, whiskies].forEach((element) {
+        if (element.isNotEmpty) {
+          element.forEach((element) {
+            rawTx +=
+                (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+          });
+        }
+      });
 
       currentTx = rawTx;
       decrementTaux();
@@ -380,7 +368,7 @@ class _DashboardState extends State<Dashboard> {
 
   /// Calcul du taux toutes les minutes
   void decrementTaux() {
-    if ((wines.isNotEmpty || beers.isNotEmpty) && rawTx > 0) {
+    if ((wines.isNotEmpty || beers.isNotEmpty || whiskies.isNotEmpty) && rawTx > 0) {
       setState(() {
         // Récupération du nombre de quarts d'heures en timestamp
         currentDate =
