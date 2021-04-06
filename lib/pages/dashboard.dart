@@ -31,9 +31,12 @@ class _DashboardState extends State<Dashboard> {
   int beerMl = 250;
   double wineDegree = globals.wineDegree;
   int wineMl = globals.wineMl;
+  double whiskyDegree = globals.whiskyDegree;
+  int whiskyMl = globals.whiskyMl;
 
   List<Drink> beers = [];
   List<Drink> wines = [];
+  List<Drink> whiskies = [];
 
   // Variables pour le design
   double clayRadius = globals.clayRadius;
@@ -163,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
                                 curveType: CurveType.concave,
                                 borderRadius: 75.0,
                                 child: IconButton(
-                                  onPressed: (() => refreshBeers()),
+                                  onPressed: (() => removeDrink(DrinkTitle.beer)),
                                   icon: Icon(Icons.refresh),
                                   iconSize: iconSize,
                                 )),
@@ -184,7 +187,7 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         ),
                         Container(
-                            padding: EdgeInsets.only(top: 20.0),
+                            padding: EdgeInsets.only(top: 10.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -263,7 +266,7 @@ class _DashboardState extends State<Dashboard> {
                               curveType: CurveType.concave,
                               borderRadius: 75.0,
                               child: IconButton(
-                                onPressed: (() => removeWine()),
+                                onPressed: (() => removeDrink(DrinkTitle.wine)),
                                 icon: Icon(Icons.arrow_drop_down),
                                 iconSize: iconSize,
                               )),
@@ -286,10 +289,48 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   )),
               ClayContainer(
+                  width: mqSize.width,
+                  color: baseColor,
+                  borderRadius: clayRadius,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      drinkContainer('images/whisky.png'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ClayContainer(
+                              color: baseColor,
+                              curveType: CurveType.concave,
+                              borderRadius: 75.0,
+                              child: IconButton(
+                                onPressed: (() => removeDrink(DrinkTitle.whisky)),
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: iconSize,
+                              )),
+                          Container(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text("${whiskies.length}",
+                                style: Theme.of(context).textTheme.headline4),
+                          ),
+                          ClayContainer(
+                              color: baseColor,
+                              curveType: CurveType.convex,
+                              borderRadius: 75.0,
+                              child: IconButton(
+                                onPressed: (() => addDrink(DrinkTitle.whisky)),
+                                icon: Icon(Icons.arrow_drop_up),
+                                iconSize: iconSize,
+                              )),
+                        ],
+                      )
+                    ],
+                  )),
+              ClayContainer(
                 color: baseColor,
                 borderRadius: 20.0,
                 child: Container(
-                  height: mqSize.height / 4,
+                  height: mqSize.height / 4.5,
                   width: mqSize.width,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -321,7 +362,7 @@ class _DashboardState extends State<Dashboard> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.0),
       child: Container(
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: EdgeInsets.symmetric(vertical: 8),
           width: mqSize.width / 4,
           child: Image.asset(path)),
     );
@@ -336,31 +377,40 @@ class _DashboardState extends State<Dashboard> {
       case DrinkTitle.wine:
         setState(() => wines.add(new Drink(degree: wineDegree, ml: wineMl)));
         break;
+      case DrinkTitle.whisky:
+        setState(() => whiskies.add(new Drink(degree: whiskyDegree, ml: whiskyMl)));
+        break;
     }
     calculTaux();
   }
 
-  /// Remise à zéro des bières bues
-  void refreshBeers() {
-    if (beers.isNotEmpty) {
-      setState(() => beers.clear());
-      calculTaux();
-    }
-  }
-
   /// Suppression d'un verre
-  void removeWine() {
-    if (wines.isNotEmpty) {
-      setState(() => wines.removeAt(0));
-      calculTaux();
+  void removeDrink(DrinkTitle drinkTitle) {
+    switch (drinkTitle) {
+      case DrinkTitle.beer:
+        if (beers.isNotEmpty) {
+          setState(() => beers.clear());
+        }
+        break;
+      case DrinkTitle.wine:
+        if (wines.isNotEmpty) {
+          setState(() => wines.removeAt(0));
+        }
+        break;
+      case DrinkTitle.whisky:
+        if (whiskies.isNotEmpty) {
+          setState(() => whiskies.removeAt(0));
+        }
+        break;
     }
+    calculTaux();
   }
 
   /// Augmentation du taux d'alcoolémie
   void calculTaux() {
     setState(() {
       rawTx = 0;
-      if ((wines.length + beers.length) == 1) {
+      if ((wines.length + beers.length + whiskies.length) == 1) {
         startDate =
             (DateTime.now().millisecondsSinceEpoch / 1000 / 60 / 15).round();
       }
@@ -376,6 +426,13 @@ class _DashboardState extends State<Dashboard> {
 
       if (wines.isNotEmpty) {
         wines.forEach((element) {
+          rawTx +=
+              (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+        });
+      }
+
+      if (whiskies.isNotEmpty) {
+        whiskies.forEach((element) {
           rawTx +=
               (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
         });

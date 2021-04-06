@@ -6,5 +6,5 @@ class Drink {
 }
 
 enum DrinkTitle {
-  beer, wine
+  beer, wine, whisky
 }

@@ -13,6 +13,8 @@ class _HelpState extends State<Help> {
   double beerDegree = globals.beerDegree;
   double wineDegree = globals.wineDegree;
   int wineMl = globals.wineMl;
+  double whiskyDegree = globals.whiskyDegree;
+  int whiskyMl = globals.whiskyMl;
   Size mqSize;
   double clayRadius = 20.0;
   Color baseColor;
@@ -24,7 +26,7 @@ class _HelpState extends State<Help> {
       new Helper(
           imgPath: "images/warning.png",
           content:
-          'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'),
+              'Le taux n\'est qu\'indicatif et ne remplace pas un alcootest.'),
       new Helper(
           imgPath: "images/beer.png",
           content:
@@ -32,7 +34,11 @@ class _HelpState extends State<Help> {
       new Helper(
           imgPath: "images/wine.png",
           content:
-              'Un verre de vin de ${(wineMl / 10).round()}cL à ${(wineDegree * 100).round()}°.'),
+              'Un verre de vin de ${(wineMl / 10).round()}cL à ${(wineDegree * 100).round()}° (un ballon).'),
+      new Helper(
+          imgPath: "images/whisky.png",
+          content:
+              'Un verre d\'alcool fort de ${(whiskyMl / 10).round()}cL à ${(whiskyDegree * 100).round()}°.'),
       new Helper(
           imgPath: "images/eating.png",
           content:
@@ -42,9 +48,9 @@ class _HelpState extends State<Help> {
           content:
               'Vos informations sont stockées sur votre appareil uniquement.'),
       new Helper(
-        imgPath: "images/notification.png",
-        content: 'Vous recevrez une notification lorsque vous pourrez reprendre la route.'
-      )
+          imgPath: "images/notification.png",
+          content:
+              'Vous recevrez une notification lorsque vous pourrez reprendre la route.')
     ];
   }
 
@@ -80,7 +86,8 @@ class _HelpState extends State<Help> {
             child: Container(
                 margin: EdgeInsets.all(5),
                 child: ListTile(
-                  title: Text(element.content, style: Theme.of(context).textTheme.headline6),
+                  title: Text(element.content,
+                      style: Theme.of(context).textTheme.headline6),
                   leading:
                       Image.asset(element.imgPath, width: mqSize.width / 10),
                 )),
