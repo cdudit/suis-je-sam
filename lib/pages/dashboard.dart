@@ -166,7 +166,8 @@ class _DashboardState extends State<Dashboard> {
                                 curveType: CurveType.concave,
                                 borderRadius: 75.0,
                                 child: IconButton(
-                                  onPressed: (() => removeDrink(DrinkTitle.beer)),
+                                  onPressed: (() =>
+                                      removeDrink(DrinkTitle.beer)),
                                   icon: Icon(Icons.refresh),
                                   iconSize: iconSize,
                                 )),
@@ -250,82 +251,8 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 ),
               ),
-              ClayContainer(
-                  width: mqSize.width,
-                  color: baseColor,
-                  borderRadius: clayRadius,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      drinkContainer('images/wine.png'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ClayContainer(
-                              color: baseColor,
-                              curveType: CurveType.concave,
-                              borderRadius: 75.0,
-                              child: IconButton(
-                                onPressed: (() => removeDrink(DrinkTitle.wine)),
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: iconSize,
-                              )),
-                          Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text("${wines.length}",
-                                style: Theme.of(context).textTheme.headline4),
-                          ),
-                          ClayContainer(
-                              color: baseColor,
-                              curveType: CurveType.convex,
-                              borderRadius: 75.0,
-                              child: IconButton(
-                                onPressed: (() => addDrink(DrinkTitle.wine)),
-                                icon: Icon(Icons.arrow_drop_up),
-                                iconSize: iconSize,
-                              )),
-                        ],
-                      )
-                    ],
-                  )),
-              ClayContainer(
-                  width: mqSize.width,
-                  color: baseColor,
-                  borderRadius: clayRadius,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      drinkContainer('images/whisky.png'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ClayContainer(
-                              color: baseColor,
-                              curveType: CurveType.concave,
-                              borderRadius: 75.0,
-                              child: IconButton(
-                                onPressed: (() => removeDrink(DrinkTitle.whisky)),
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: iconSize,
-                              )),
-                          Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text("${whiskies.length}",
-                                style: Theme.of(context).textTheme.headline4),
-                          ),
-                          ClayContainer(
-                              color: baseColor,
-                              curveType: CurveType.convex,
-                              borderRadius: 75.0,
-                              child: IconButton(
-                                onPressed: (() => addDrink(DrinkTitle.whisky)),
-                                icon: Icon(Icons.arrow_drop_up),
-                                iconSize: iconSize,
-                              )),
-                        ],
-                      )
-                    ],
-                  )),
+              myAlcool('images/wine.png', DrinkTitle.wine, wines),
+              myAlcool('images/whisky.png', DrinkTitle.whisky, whiskies),
               ClayContainer(
                 color: baseColor,
                 borderRadius: 20.0,
@@ -358,6 +285,60 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  ClayContainer myAlcool(String imgPath, DrinkTitle drinkTitle, List<Drink> list) {
+    return ClayContainer(
+        width: mqSize.width,
+        color: baseColor,
+        borderRadius: clayRadius,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              drinkContainer(imgPath), 
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  myArrowDown(drinkTitle),
+                  myIncrementedNumber(list),
+                  myArrowUp(drinkTitle),
+                ]
+              )
+            ]
+        )
+    );
+  }
+
+  Container myIncrementedNumber(List<Drink> list) {
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child:
+          Text("${list.length}", style: Theme.of(context).textTheme.headline4),
+    );
+  }
+
+  ClayContainer myArrowUp(DrinkTitle drinkTitle) {
+    return ClayContainer(
+        color: baseColor,
+        curveType: CurveType.convex,
+        borderRadius: 75.0,
+        child: IconButton(
+          onPressed: (() => addDrink(drinkTitle)),
+          icon: Icon(Icons.arrow_drop_up),
+          iconSize: iconSize,
+        ));
+  }
+
+  ClayContainer myArrowDown(DrinkTitle drinkTitle) {
+    return ClayContainer(
+        color: baseColor,
+        curveType: CurveType.concave,
+        borderRadius: 75.0,
+        child: IconButton(
+          onPressed: (() => removeDrink(drinkTitle)),
+          icon: Icon(Icons.arrow_drop_down),
+          iconSize: iconSize,
+        ));
+  }
+
   Container drinkContainer(String path) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -378,7 +359,8 @@ class _DashboardState extends State<Dashboard> {
         setState(() => wines.add(new Drink(degree: wineDegree, ml: wineMl)));
         break;
       case DrinkTitle.whisky:
-        setState(() => whiskies.add(new Drink(degree: whiskyDegree, ml: whiskyMl)));
+        setState(
+            () => whiskies.add(new Drink(degree: whiskyDegree, ml: whiskyMl)));
         break;
     }
     calculTaux();
@@ -482,7 +464,8 @@ class _DashboardState extends State<Dashboard> {
         restToDecuve++;
       }
       restToDecuve += (isEmptyStomach == true) ? 2 : 4;
-      hourOfDecuve = DateTime.now().millisecondsSinceEpoch + (restToDecuve * 15 * 60 * 1000);
+      hourOfDecuve = DateTime.now().millisecondsSinceEpoch +
+          (restToDecuve * 15 * 60 * 1000);
       if (currentTx > (isYoung ? 0.2 : 0.5)) {
         notificationPlugin.showNotification(hourOfDecuve);
       }
@@ -526,7 +509,8 @@ class _DashboardState extends State<Dashboard> {
         userGenderTx = (prefs.getInt('userGender') == 0) ? 0.7 : 0.6;
         isYoung = prefs.getBool('isYoung') ?? null;
         if (userWeight == null || isYoung == null) {
-          Navigator.pushNamed(context, '/informations').then((_) => getShared());
+          Navigator.pushNamed(context, '/informations')
+              .then((_) => getShared());
         }
         calculTaux();
       });
