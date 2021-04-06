@@ -44,13 +44,16 @@ class _HelpState extends State<Help> {
           content:
               'A jeun, la redescente se fait au bout de 30min, contre 60 sinon.'),
       new Helper(
-          imgPath: "images/information.png",
+          imgPath: "images/lock.png",
           content:
               'Vos informations sont stockées sur votre appareil uniquement.'),
       new Helper(
           imgPath: "images/notification.png",
           content:
-              'Vous recevrez une notification lorsque vous pourrez reprendre la route.')
+              'Vous recevrez une notification lorsque vous pourrez reprendre la route.'),
+      new Helper(
+          imgPath: "images/information.png",
+          content: 'Toutes les icônes ont été téléchargées via flaticon.com'),
     ];
   }
 
@@ -63,11 +66,13 @@ class _HelpState extends State<Help> {
       appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.white),
           title: Text("Aide", style: TextStyle(color: Colors.white))),
-      body: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: helpList(),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: helpList(),
+          ),
         ),
       ),
     );
