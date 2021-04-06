@@ -192,58 +192,12 @@ class _DashboardState extends State<Dashboard> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                ClayContainer(
-                                  emboss: (beerMl == 250),
-                                  curveType: (beerMl == 250)
-                                      ? CurveType.concave
-                                      : CurveType.none,
-                                  spread: (beerMl == 250) ? 10 : 0,
-                                  depth: (beerMl == 250) ? 10 : 0,
-                                  borderRadius: 50.0,
-                                  color: baseColor,
-                                  child: TextButton(
-                                      style: beersMlShape(),
-                                      onPressed: (() =>
-                                          setState(() => beerMl = 250)),
-                                      child: Text("25",
-                                          style: TextStyle(fontSize: 20))),
-                                ),
+                                beerMlContainer(250),
                                 Container(
                                   padding:
-                                      EdgeInsets.only(left: 10.0, right: 10.0),
-                                  child: ClayContainer(
-                                    emboss: (beerMl == 330),
-                                    curveType: (beerMl == 330)
-                                        ? CurveType.concave
-                                        : CurveType.none,
-                                    spread: (beerMl == 330) ? 10 : 0,
-                                    depth: (beerMl == 330) ? 10 : 0,
-                                    borderRadius: 50.0,
-                                    color: baseColor,
-                                    child: TextButton(
-                                        style: beersMlShape(),
-                                        onPressed: (() =>
-                                            setState(() => beerMl = 330)),
-                                        child: Text("33",
-                                            style: TextStyle(fontSize: 20))),
-                                  ),
-                                ),
-                                ClayContainer(
-                                  emboss: (beerMl == 500),
-                                  curveType: (beerMl == 500)
-                                      ? CurveType.concave
-                                      : CurveType.none,
-                                  spread: (beerMl == 500) ? 10 : 0,
-                                  depth: (beerMl == 500) ? 10 : 0,
-                                  borderRadius: 50.0,
-                                  color: baseColor,
-                                  child: TextButton(
-                                      style: beersMlShape(),
-                                      onPressed: (() =>
-                                          setState(() => beerMl = 500)),
-                                      child: Text("50",
-                                          style: TextStyle(fontSize: 20))),
-                                )
+                                      EdgeInsets.symmetric(horizontal: 10),
+                                  child: beerMlContainer(330)),
+                                beerMlContainer(500),
                               ],
                             ))
                       ],
@@ -285,58 +239,53 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  ClayContainer myAlcool(String imgPath, DrinkTitle drinkTitle, List<Drink> list) {
+  ClayContainer beerMlContainer(int ml) {
+    return ClayContainer(
+        emboss: (beerMl == ml),
+        curveType: (beerMl == ml) ? CurveType.concave : CurveType.none,
+        spread: (beerMl == ml) ? 10 : 0,
+        depth: (beerMl == ml) ? 10 : 0,
+        borderRadius: 50.0,
+        color: baseColor,
+        child: TextButton(
+            style: beersMlShape(),
+            onPressed: (() => setState(() => beerMl = ml)),
+            child: Text("${(ml / 10).round()}", style: TextStyle(fontSize: 20))));
+  }
+
+  ClayContainer myAlcool(
+      String imgPath, DrinkTitle drinkTitle, List<Drink> list) {
     return ClayContainer(
         width: mqSize.width,
         color: baseColor,
         borderRadius: clayRadius,
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              drinkContainer(imgPath), 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  myArrowDown(drinkTitle),
-                  myIncrementedNumber(list),
-                  myArrowUp(drinkTitle),
-                ]
-              )
-            ]
-        )
-    );
-  }
-
-  Container myIncrementedNumber(List<Drink> list) {
-    return Container(
-      padding: EdgeInsets.all(10.0),
-      child:
-          Text("${list.length}", style: Theme.of(context).textTheme.headline4),
-    );
-  }
-
-  ClayContainer myArrowUp(DrinkTitle drinkTitle) {
-    return ClayContainer(
-        color: baseColor,
-        curveType: CurveType.convex,
-        borderRadius: 75.0,
-        child: IconButton(
-          onPressed: (() => addDrink(drinkTitle)),
-          icon: Icon(Icons.arrow_drop_up),
-          iconSize: iconSize,
-        ));
-  }
-
-  ClayContainer myArrowDown(DrinkTitle drinkTitle) {
-    return ClayContainer(
-        color: baseColor,
-        curveType: CurveType.concave,
-        borderRadius: 75.0,
-        child: IconButton(
-          onPressed: (() => removeDrink(drinkTitle)),
-          icon: Icon(Icons.arrow_drop_down),
-          iconSize: iconSize,
-        ));
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          drinkContainer(imgPath),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            ClayContainer(
+                color: baseColor,
+                curveType: CurveType.concave,
+                borderRadius: 75.0,
+                child: IconButton(
+                  onPressed: (() => removeDrink(drinkTitle)),
+                  icon: Icon(Icons.arrow_drop_down),
+                  iconSize: iconSize,
+                )),
+            Container(
+                padding: EdgeInsets.all(10.0),
+                child: Text("${list.length}",
+                    style: Theme.of(context).textTheme.headline4)),
+            ClayContainer(
+                color: baseColor,
+                curveType: CurveType.convex,
+                borderRadius: 75.0,
+                child: IconButton(
+                  onPressed: (() => addDrink(drinkTitle)),
+                  icon: Icon(Icons.arrow_drop_up),
+                  iconSize: iconSize,
+                ))
+          ])
+        ]));
   }
 
   Container drinkContainer(String path) {
