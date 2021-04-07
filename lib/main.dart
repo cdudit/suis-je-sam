@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     bool needSplashScreen = true;
     SharedPreferences.getInstance().then((prefs) {
-      if (prefs.getBool('isAlreadyLaunch')) {
+      if (prefs.getBool('isAlreadyLaunch') == true) {
         needSplashScreen = false;
       }
     });
