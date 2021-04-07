@@ -26,10 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
               height: MediaQuery.of(context).size.height / 2.5,
               child: Lottie.asset('images/splash.json'),
             ),
-            Text(
-                "Activez les notifications pour être informé même lorsque vous n'êtes pas sur l'application",
-                style: TextStyle(fontSize: 25, color: Colors.white),
-                textAlign: TextAlign.center),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                  "Activez les notifications pour rester informé même lorsque vous n'êtes pas sur l'application",
+                  style: TextStyle(fontSize: 25, color: Colors.white),
+                  textAlign: TextAlign.center)
+            ),
             Container(
               height: MediaQuery.of(context).size.height / 5,
               padding: EdgeInsets.symmetric(vertical: 10),
