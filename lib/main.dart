@@ -19,11 +19,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool needSplashScreen = true;
+    // 0 si première utilisation
+    // 1 si aucune information encore saisie
+    // 2 si prêt à l'emploi
+    int state = 0;
     SharedPreferences.getInstance().then((prefs) {
-      if (prefs.getBool('isAlreadyLaunch') == true) {
-        needSplashScreen = false;
-      }
+      state = prefs.getInt('state') ?? 0;
     });
 
     return MaterialApp(
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.lightBlue,
           brightness: Brightness.dark),
       themeMode: ThemeMode.system,
-      home: (needSplashScreen) ? SplashScreen() : Dashboard(),
+      home: (state == 0) ? SplashScreen() : ((state == 1) ? Informations() : Dashboard()),
     );
   }
 }

@@ -21,12 +21,21 @@ class _InformationsState extends State<Informations> {
   Color baseColor;
   Size mqSize;
 
+  // 0 si première utilisation
+  // 1 si aucune information encore saisie
+  // 2 si prêt à l'emploi
+  int state;
+
   @override
   void initState() {
     super.initState();
     // Récupération des informations dans les shared préférences
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
+        state = prefs.getInt('state') ?? 1;
+        if (state == 1) {
+          showAlertDialog(context);
+        }
         userWeight = prefs.getInt('userWeight') ?? 1;
         userGender = prefs.getInt('userGender') ?? 1;
         isYoung = prefs.getBool('isYoung') ?? false;
@@ -41,9 +50,10 @@ class _InformationsState extends State<Informations> {
 
     return Scaffold(
       appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
-          title:
-              Text("Vos informations", style: TextStyle(color: Colors.white))),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Vos informations", style: TextStyle(color: Colors.white)),
+        actions: [_getActions()],
+      ),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(10.0),
@@ -121,13 +131,17 @@ class _InformationsState extends State<Informations> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Image.asset("images/weight.png", width: mqSize.width / 3.5),
+                      Image.asset("images/weight.png",
+                          width: mqSize.width / 3.5),
                       Container(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            infosResult((userWeight != null)
+                                ? (userWeight.toString() + ' kg')
+                                : '0 kg'),
                             Container(
-                              padding: EdgeInsets.only(bottom: 15.0),
+                              padding: EdgeInsets.only(top: 15.0),
                               child: ClayContainer(
                                 color: baseColor,
                                 borderRadius: clayRadius,
@@ -149,10 +163,7 @@ class _InformationsState extends State<Informations> {
                                       })),
                                 ),
                               ),
-                            ),
-                            infosResult((userWeight != null)
-                                ? (userWeight.toString() + ' kg')
-                                : '0 kg')
+                            )
                           ],
                         ),
                       ),
@@ -167,6 +178,43 @@ class _InformationsState extends State<Informations> {
     );
   }
 
+  /// Affichage d'un alertDialog pour prévenir l'utilisateur que ses informations sont stockées localement
+  showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Important", style: TextStyle(fontSize: 30)),
+          content: Text(
+              "Vos informations sont stockées sur l'appareil uniquement 🤐",
+              style: TextStyle(fontSize: 20)),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Affichage de l'action "OK" si l'utilisateur saisi ses informations pour la première fois
+  Widget _getActions() {
+    if (state == 2) {
+      return Container();
+    } else {
+      return TextButton(
+          onPressed: (() {
+            SharedPreferences.getInstance()
+                .then((prefs) => prefs.setInt('state', 2));
+            Navigator.pushReplacementNamed(context, '/dashboard');
+          }),
+          child: Text("OK"));
+    }
+  }
+
+  /// Envoie des données vers les SharedPreferences
   void sendToShared() {
     SharedTools().sendUserInformations(userWeight, userGender, isYoung);
   }
@@ -190,13 +238,19 @@ class _InformationsState extends State<Informations> {
         spread: (userGender == myUserGender) ? 10 : 0,
         child: Container(
           padding: EdgeInsets.all(5.0),
-          child: (userGender == myUserGender) ? Icon(Icons.check, size: 50) : Text(""),
+          child: (userGender == myUserGender)
+              ? Icon(Icons.check, size: 50)
+              : Text(""),
           decoration: BoxDecoration(
-              color: (userGender == myUserGender) ? Colors.green : Colors.transparent,
+              color: (userGender == myUserGender)
+                  ? Colors.green
+                  : Colors.transparent,
               borderRadius: BorderRadius.all(Radius.circular(75)),
               image: DecorationImage(
                   colorFilter: new ColorFilter.mode(
-                      Colors.black.withOpacity((userGender == myUserGender) ? 0.5 : 1), BlendMode.dstATop),
+                      Colors.black
+                          .withOpacity((userGender == myUserGender) ? 0.5 : 1),
+                      BlendMode.dstATop),
                   image: Image.asset(path).image,
                   fit: BoxFit.cover)),
         ));
