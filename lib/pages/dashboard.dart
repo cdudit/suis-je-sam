@@ -73,32 +73,32 @@ class _DashboardState extends State<Dashboard> {
       drawer: Drawer(
         child: Container(
             child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              child: Center(
-                  child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35))),
-              margin: EdgeInsets.only(bottom: 2.0),
-            ),
-            ListTile(
-              title: Text("Mes informations", style: TextStyle(fontSize: 20)),
-              leading: Icon(Icons.account_circle, size: 30),
-              onTap: (() {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/informations')
-                    .then((_) => getShared());
-              }),
-            ),
-            ListTile(
-              title: Text("Aide", style: TextStyle(fontSize: 20)),
-              leading: Icon(Icons.help, size: 30),
-              onTap: (() {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/help');
-              }),
-            )
-          ],
-        )),
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  child: Center(
+                      child: Text("Suis-je Sam ?", style: TextStyle(fontSize: 35))),
+                  margin: EdgeInsets.only(bottom: 2.0),
+                ),
+                ListTile(
+                  title: Text("Mes informations", style: TextStyle(fontSize: 20)),
+                  leading: Icon(Icons.account_circle, size: 30),
+                  onTap: (() {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/informations')
+                        .then((_) => getShared());
+                  }),
+                ),
+                ListTile(
+                  title: Text("Aide", style: TextStyle(fontSize: 20)),
+                  leading: Icon(Icons.help, size: 30),
+                  onTap: (() {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/help');
+                  }),
+                )
+              ],
+            )),
       ),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -111,129 +111,140 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
       body: Center(
-        child: Container(
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ClayContainer(
-                color: baseColor,
-                borderRadius: clayRadius,
-                child: MergeSemantics(
-                  child: ListTile(
-                    title: Text('Je suis à jeun',
-                        style: Theme.of(context).textTheme.headline5),
-                    trailing: ClayContainer(
-                      curveType: CurveType.convex,
-                      borderRadius: 75,
-                      color: baseColor,
-                      child: CupertinoSwitch(
-                        value: isEmptyStomach,
-                        activeColor: Colors.lightBlue,
-                        onChanged: (bool value) {
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              height: mqSize.height * 0.7,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ClayContainer(
+                    color: baseColor,
+                    borderRadius: clayRadius,
+                    child: MergeSemantics(
+                      child: ListTile(
+                        title: Text('Je suis à jeun',
+                            style: Theme.of(context).textTheme.headline5),
+                        trailing: ClayContainer(
+                          curveType: CurveType.convex,
+                          borderRadius: 75,
+                          color: baseColor,
+                          child: CupertinoSwitch(
+                            value: isEmptyStomach,
+                            activeColor: Colors.lightBlue,
+                            onChanged: (bool value) {
+                              setState(() {
+                                isEmptyStomach = value;
+                                decrementTaux();
+                              });
+                            },
+                          ),
+                        ),
+                        onTap: () {
                           setState(() {
-                            isEmptyStomach = value;
+                            isEmptyStomach = !isEmptyStomach;
                             decrementTaux();
                           });
                         },
                       ),
                     ),
-                    onTap: () {
-                      setState(() {
-                        isEmptyStomach = !isEmptyStomach;
-                        decrementTaux();
-                      });
-                    },
                   ),
-                ),
-              ),
-              ClayContainer(
-                width: mqSize.width,
-                color: baseColor,
-                borderRadius: clayRadius,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    drinkContainer('images/beer.png'),
-                    Column(
+                  ClayContainer(
+                    width: mqSize.width,
+                    color: baseColor,
+                    borderRadius: clayRadius,
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
+                        drinkContainer('images/beer.png'),
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ClayContainer(
-                                color: baseColor,
-                                curveType: CurveType.concave,
-                                borderRadius: 75.0,
-                                child: IconButton(
-                                  onPressed: (() =>
-                                      removeDrink(DrinkTitle.beer)),
-                                  icon: Icon(Icons.refresh),
-                                  iconSize: iconSize,
-                                )),
-                            Container(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text("${beers.length}",
-                                  style: Theme.of(context).textTheme.headline4),
-                            ),
-                            ClayContainer(
-                                color: baseColor,
-                                curveType: CurveType.convex,
-                                borderRadius: 75.0,
-                                child: IconButton(
-                                    onPressed: (() =>
-                                        addDrink(DrinkTitle.beer)),
-                                    icon: Icon(Icons.arrow_drop_up),
-                                    iconSize: iconSize)),
-                          ],
-                        ),
-                        Container(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                beerMlContainer(250),
+                                ClayContainer(
+                                    color: baseColor,
+                                    curveType: CurveType.concave,
+                                    borderRadius: 75.0,
+                                    child: IconButton(
+                                      onPressed: (() =>
+                                          removeDrink(DrinkTitle.beer)),
+                                      icon: Icon(Icons.refresh),
+                                      iconSize: iconSize,
+                                    )),
                                 Container(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 10),
-                                  child: beerMlContainer(330)),
-                                beerMlContainer(500),
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Text("${beers.length}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline4),
+                                ),
+                                ClayContainer(
+                                    color: baseColor,
+                                    curveType: CurveType.convex,
+                                    borderRadius: 75.0,
+                                    child: IconButton(
+                                        onPressed: (() =>
+                                            addDrink(DrinkTitle.beer)),
+                                        icon: Icon(Icons.arrow_drop_up),
+                                        iconSize: iconSize)),
                               ],
-                            ))
+                            ),
+                            Container(
+                                padding: EdgeInsets.only(top: 10.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    beerMlContainer(250),
+                                    Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: beerMlContainer(330)),
+                                    beerMlContainer(500),
+                                  ],
+                                ))
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                ),
-              ),
-              myAlcool('images/wine.png', DrinkTitle.wine, wines),
-              myAlcool('images/whisky.png', DrinkTitle.whisky, whiskies),
-              ClayContainer(
-                color: baseColor,
-                borderRadius: 20.0,
-                child: Container(
-                  height: mqSize.height / 4.5,
-                  width: mqSize.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("${currentTx.toStringAsFixed(2)} g/L*",
-                          style: TextStyle(fontSize: 70)),
-                      Center(
-                        child: Column(children: [
-                          Text(formatRestToDecuve(),
-                              style: TextStyle(fontSize: 22)),
-                          Text(
-                            "*Taux indicatif, ne remplace pas un alcootest",
-                            style: TextStyle(fontSize: 15),
-                          )
-                        ]),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
+                  myAlcool('images/wine.png', DrinkTitle.wine, wines),
+                  myAlcool('images/whisky.png', DrinkTitle.whisky, whiskies),
+                ],
+              ),
+            ),
+            Expanded(
+                child: ClayContainer(
+                    width: mqSize.width,
+                    color: baseColor,
+                    depth: 10,
+                    spread: 5,
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 35, top: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text("${currentTx.toStringAsFixed(2)} g/L*",
+                              style: TextStyle(fontSize: 70)),
+                          Center(
+                            child: Column(children: [
+                              Text(formatRestToDecuve(),
+                                  style: TextStyle(fontSize: 22)),
+                              Text(
+                                "*Taux indicatif, ne remplace pas un alcootest",
+                                style: TextStyle(fontSize: 15),
+                              )
+                            ]),
+                          ),
+                        ],
+                      ),
+                    )))
+          ],
         ),
       ),
     );
@@ -254,7 +265,8 @@ class _DashboardState extends State<Dashboard> {
                       borderRadius: BorderRadius.circular(15.0),
                     ))),
             onPressed: (() => setState(() => beerMl = ml)),
-            child: Text("${(ml / 10).round()}", style: TextStyle(fontSize: 20))));
+            child:
+            Text("${(ml / 10).round()}", style: TextStyle(fontSize: 20))));
   }
 
   ClayContainer myAlcool(
@@ -294,10 +306,10 @@ class _DashboardState extends State<Dashboard> {
 
   Container drinkContainer(String path) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 20.0),
       child: Container(
           padding: EdgeInsets.symmetric(vertical: 8),
-          width: mqSize.width / 4,
+          width: mqSize.width * 0.2,
           child: Image.asset(path)),
     );
   }
@@ -313,7 +325,7 @@ class _DashboardState extends State<Dashboard> {
         break;
       case DrinkTitle.whisky:
         setState(
-            () => whiskies.add(new Drink(degree: whiskyDegree, ml: whiskyMl)));
+                () => whiskies.add(new Drink(degree: whiskyDegree, ml: whiskyMl)));
         break;
     }
     calculTaux();
@@ -355,8 +367,8 @@ class _DashboardState extends State<Dashboard> {
       [beers, wines, whiskies].forEach((element) {
         if (element.isNotEmpty) {
           element.forEach((element) {
-            rawTx +=
-                (element.ml * element.degree * 0.8) / (userWeight * userGenderTx);
+            rawTx += (element.ml * element.degree * 0.8) /
+                (userWeight * userGenderTx);
           });
         }
       });
@@ -368,7 +380,8 @@ class _DashboardState extends State<Dashboard> {
 
   /// Calcul du taux toutes les minutes
   void decrementTaux() {
-    if ((wines.isNotEmpty || beers.isNotEmpty || whiskies.isNotEmpty) && rawTx > 0) {
+    if ((wines.isNotEmpty || beers.isNotEmpty || whiskies.isNotEmpty) &&
+        rawTx > 0) {
       setState(() {
         // Récupération du nombre de quarts d'heures en timestamp
         currentDate =
@@ -462,3 +475,4 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 }
+

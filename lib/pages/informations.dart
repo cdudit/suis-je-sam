@@ -206,9 +206,10 @@ class _InformationsState extends State<Informations> {
     } else {
       return TextButton(
           onPressed: (() {
-            SharedPreferences.getInstance()
-                .then((prefs) => prefs.setInt('state', 2));
-            Navigator.pushReplacementNamed(context, '/dashboard');
+            SharedPreferences.getInstance().then((prefs) {
+              prefs.setInt('state', 2);
+              Navigator.pushReplacementNamed(context, '/dashboard');
+            });
           }),
           child: Text("OK"));
     }
@@ -233,7 +234,7 @@ class _InformationsState extends State<Informations> {
         height: mqSize.height / divider,
         emboss: (userGender == myUserGender),
         curveType:
-            (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
+        (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
         depth: (userGender == myUserGender) ? 15 : 0,
         spread: (userGender == myUserGender) ? 10 : 0,
         child: Container(
@@ -272,3 +273,4 @@ class _InformationsState extends State<Informations> {
         style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w200));
   }
 }
+
