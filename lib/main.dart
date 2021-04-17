@@ -23,29 +23,30 @@ class MyApp extends StatelessWidget {
     // 1 si aucune information encore saisie
     // 2 si prêt à l'emploi
     int state = 0;
+
     SharedPreferences.getInstance().then((prefs) {
       state = prefs.getInt('state') ?? 0;
-    });
 
-    return MaterialApp(
-      routes: {
-        '/splashScreen': (context) => SplashScreen(),
-        '/informations': (context) => Informations(),
-        '/dashboard': (context) => Dashboard(),
-        '/help': (context) => Help()
-      },
-      debugShowCheckedModeBanner: false,
-      title: 'Suis-je Sam ?',
-      theme: ThemeData(
-          accentColor: Color(0xFFEFEEEE),
-          primarySwatch: Colors.lightBlue,
-          brightness: Brightness.light),
-      darkTheme: ThemeData(
-          accentColor: Color(0xFF292D32),
-          primarySwatch: Colors.lightBlue,
-          brightness: Brightness.dark),
-      themeMode: ThemeMode.system,
-      home: (state == 0) ? SplashScreen() : ((state == 1) ? Informations() : Dashboard()),
-    );
+      return MaterialApp(
+        routes: {
+          '/splashScreen': (context) => SplashScreen(),
+          '/informations': (context) => Informations(),
+          '/dashboard': (context) => Dashboard(),
+          '/help': (context) => Help()
+        },
+        debugShowCheckedModeBanner: false,
+        title: 'Suis-je Sam ?',
+        theme: ThemeData(
+            accentColor: Color(0xFFEFEEEE),
+            primarySwatch: Colors.blueGrey,
+            brightness: Brightness.light),
+        darkTheme: ThemeData(
+            accentColor: Color(0xFF292D32),
+            primarySwatch: Colors.blue,
+            brightness: Brightness.dark),
+        themeMode: ThemeMode.system,
+        home: (state == 0) ? SplashScreen() : ((state == 1) ? Informations() : Dashboard()),
+      );
+    });
   }
 }
