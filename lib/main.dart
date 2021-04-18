@@ -10,21 +10,21 @@ import 'package:suis_je_sam/pages/splashScreen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(MyApp());
+  SharedPreferences.getInstance().then((prefs) {
+    bool ready = prefs.getBool("ready") ?? false;
+    if (ready == null) {
+      ready = false;
+    }
+    runApp(MyApp(ready: ready));
+  });
 }
 
 class MyApp extends StatelessWidget {
+  MyApp({Key key, this.ready}) : super(key: key);
+  final bool ready;
+
   @override
   Widget build(BuildContext context) {
-    // 0 si première utilisation
-    // 1 si aucune information encore saisie
-    // 2 si prêt à l'emploi
-    int state = 0;
-
-    SharedPreferences.getInstance().then((prefs) {
-      state = prefs.getInt('state') ?? 0;
-    });
-
     return MaterialApp(
       routes: {
         '/splashScreen': (context) => SplashScreen(),
@@ -43,9 +43,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           brightness: Brightness.dark),
       themeMode: ThemeMode.system,
-      home: (state == 0)
-          ? SplashScreen()
-          : ((state == 1) ? Informations() : Dashboard()),
+      home: (!ready || ready == null) ? SplashScreen() : Dashboard(),
     );
   }
 }

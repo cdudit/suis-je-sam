@@ -69,13 +69,11 @@ class _SplashScreenState extends State<SplashScreen> {
           ))),
       floatingActionButton: FloatingActionButton(
         onPressed: (() {
-          buttonCarouselController.nextPage(
-              duration: Duration(milliseconds: 300), curve: Curves.linear);
           if (readyToGo) {
-            SharedPreferences.getInstance().then((prefs) {
-              prefs.setInt('state', 1);
-              Navigator.pushReplacementNamed(context, '/informations');
-            });
+            Navigator.pushReplacementNamed(context, '/informations');
+          } else {
+            buttonCarouselController.nextPage(
+                duration: Duration(milliseconds: 300), curve: Curves.linear);
           }
         }),
         child: Icon((readyToGo) ? Icons.check : Icons.arrow_forward),

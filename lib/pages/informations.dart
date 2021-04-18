@@ -21,10 +21,9 @@ class _InformationsState extends State<Informations> {
   Color baseColor;
   Size mqSize;
 
-  // 0 si première utilisation
-  // 1 si aucune information encore saisie
-  // 2 si prêt à l'emploi
-  int state;
+  // false si première utilisation
+  // true si aucune information encore saisie
+  bool ready = false;
 
   @override
   void initState() {
@@ -32,13 +31,14 @@ class _InformationsState extends State<Informations> {
     // Récupération des informations dans les shared préférences
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
-        state = prefs.getInt('state') ?? 1;
-        if (state == 1) {
+        ready = prefs.getBool('ready') ?? false;
+        if (!ready) {
           showAlertDialog(context);
         }
         userWeight = prefs.getInt('userWeight') ?? 1;
         userGender = prefs.getInt('userGender') ?? 1;
         isYoung = prefs.getBool('isYoung') ?? false;
+        sendToShared();
       });
     });
   }
@@ -186,7 +186,7 @@ class _InformationsState extends State<Informations> {
         return AlertDialog(
           title: Text("Important", style: TextStyle(fontSize: 30)),
           content: Text(
-              "Vos informations sont stockées sur l'appareil uniquement 🤐",
+              "Vos informations sont indispensables pour les calculs effectués et sont stockées sur l'appareil uniquement 🤐",
               style: TextStyle(fontSize: 20)),
           actions: [
             TextButton(
@@ -201,17 +201,17 @@ class _InformationsState extends State<Informations> {
 
   /// Affichage de l'action "OK" si l'utilisateur saisi ses informations pour la première fois
   Widget _getActions() {
-    if (state == 2) {
+    if (ready) {
       return Container();
     } else {
-      return TextButton(
+      return IconButton(
           onPressed: (() {
             SharedPreferences.getInstance().then((prefs) {
-              prefs.setInt('state', 2);
-              Navigator.pushReplacementNamed(context, '/dashboard');
+              prefs.setBool('ready', true).then(
+                  (_) => Navigator.pushReplacementNamed(context, '/dashboard'));
             });
           }),
-          child: Text("OK"));
+          icon: Icon(Icons.check_circle));
     }
   }
 
@@ -234,7 +234,7 @@ class _InformationsState extends State<Informations> {
         height: mqSize.height / divider,
         emboss: (userGender == myUserGender),
         curveType:
-        (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
+            (userGender == myUserGender) ? CurveType.concave : CurveType.convex,
         depth: (userGender == myUserGender) ? 15 : 0,
         spread: (userGender == myUserGender) ? 10 : 0,
         child: Container(
@@ -273,4 +273,3 @@ class _InformationsState extends State<Informations> {
         style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.w200));
   }
 }
-
