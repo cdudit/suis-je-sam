@@ -52,6 +52,9 @@ class _HelpState extends State<Help> {
           content:
               'Vous recevrez une notification lorsque vous pourrez reprendre la route.'),
       new Helper(
+          imgPath: "images/darkmode.png",
+          content: "Aussi beau en mode sombre !"),
+      new Helper(
           imgPath: "images/information.png",
           content: 'Toutes les icônes ont été téléchargées via flaticon.com'),
     ];

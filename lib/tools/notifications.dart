@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzData;
+import 'dart:io' show Platform;
 
 class NotificationPlugin {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -24,13 +25,14 @@ class NotificationPlugin {
   /// Initialisation des plateformes
   _initializePlatformSpecifics() {
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('logo_launcher');
+        AndroidInitializationSettings('ic_stat_local_drink');
     var initializationSettingsIOS = IOSInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
         requestSoundPermission: false);
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   Future<void> cancelNotifications() async {
@@ -42,17 +44,17 @@ class NotificationPlugin {
     // On désactive les précédentes notifications
     cancelNotifications();
 
-    _requestIOSPermission();
+    if (Platform.isIOS) {
+      _requestIOSPermission();
+    }
     _initializePlatformSpecifics();
 
     var androidChannelSpecifics = AndroidNotificationDetails(
-      'CHANNEL_ID',
-      'CHANNEL_NAME',
-      "CHANNEL_DESCRIPTION",
+      '0',
+      'Taux d\'alcoolémie',
+      "Vous pouvez de nouveau conduire",
       importance: Importance.max,
       priority: Priority.high,
-      playSound: true,
-      timeoutAfter: 5000,
       styleInformation: DefaultStyleInformation(true, true),
     );
     var iosChannelSpecifics = IOSNotificationDetails(

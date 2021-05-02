@@ -68,6 +68,7 @@ flutter:
     - images/information.png
     - images/notification.png
     - images/whisky.png
+    - images/darkmode.png
     - images/lock.png
     - images/splash.json
     - images/notification.json

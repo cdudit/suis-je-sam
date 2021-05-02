@@ -110,10 +110,11 @@ class _DashboardState extends State<Dashboard> {
               iconSize: 30),
         ],
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -165,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                MainAxisAlignment.spaceEvenly,
                                 children: [
                                   ClayContainer(
                                       color: baseColor,
@@ -199,7 +200,7 @@ class _DashboardState extends State<Dashboard> {
                                   padding: EdgeInsets.only(top: 10.0),
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                     children: [
                                       beerMlContainer(250),
                                       Container(
@@ -227,31 +228,31 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             ),
-            Expanded(
-                child: ClayContainer(
-                    width: mqSize.width,
-                    color: baseColor,
-                    depth: 10,
-                    spread: 5,
-                    child: Container(
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 20),
-                            child: Text("${currentTx.toStringAsFixed(2)} g/L*",
-                                style: TextStyle(fontSize: 60)),
-                          ),
-                          Column(children: [
-                            Text(formatRestToDecuve(),
-                                style: TextStyle(fontSize: 22)),
-                            Text(
-                              "*Taux indicatif, ne remplace pas un alcootest",
-                              style: TextStyle(fontSize: 15),
-                            )
-                          ])
-                        ],
+            ClayContainer(
+                width: mqSize.width,
+                color: baseColor,
+                depth: 10,
+                spread: 5,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text("${currentTx.toStringAsFixed(2)} g/L*",
+                            style: TextStyle(fontSize: 60)),
                       ),
-                    )))
+                      Column(children: [
+                        Text(formatRestToDecuve(),
+                            style: TextStyle(fontSize: 22)),
+                        Text(
+                          "*Taux indicatif, ne remplace pas un alcootest",
+                          style: TextStyle(fontSize: 15),
+                        )
+                      ])
+                    ],
+                  ),
+                ))
           ],
         ),
       ),
